@@ -30,6 +30,19 @@ class TextFilterEngineTest {
     }
 
     @Test
+    fun generatedTableFlagsSimplifiedAndSparesTraditionalAndJapanese() {
+        val simplified = listOf("个", "开门", "风电", "这是", "专业", "实现", "鸟", "龙", "经典", "华语", "东京爱情故事")
+        val notSimplified = listOf(
+            "價格", "優秀", "愛你", "開門", "風電", "經典", "華語", // Traditional
+            "国境", "学会", "体育", "医学", "音楽", "東京", // Japanese kanji, shared or Japanese forms
+            "后来", "里面", "干杯", "台北", // valid in Traditional Chinese too, so deliberately not listed
+            "价", "优", "叶", "听", // present in Big5, so not flagged
+        )
+        for (t in simplified) assertTrue(TextFilterEngine.isSimplified(t), "expected Simplified: $t")
+        for (t in notSimplified) assertFalse(TextFilterEngine.isSimplified(t), "expected not Simplified: $t")
+    }
+
+    @Test
     fun simplifiedRuleOffDoesNotMatch() {
         val config = FilterConfig(simplifiedEnabled = false, keywords = emptyList())
         assertFalse(TextFilterEngine.evaluate("爱你", "", config).matched)
