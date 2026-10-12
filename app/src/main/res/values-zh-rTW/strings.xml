@@ -1,0 +1,48 @@
+<resources>
+    <string name="status_access_missing_title">需要通知存取權</string>
+    <string name="status_access_missing_body">Media Auto-Skipper 會讀取其他 App 正在播放的曲目,以便跳過你不想聽的歌。它不會播放或錄製任何聲音。請到系統設定授予通知存取權。</string>
+    <string name="action_open_settings">開啟通知存取權設定</string>
+    <string name="status_access_granted">已授予通知存取權,服務已就緒。</string>
+
+    <string name="switch_label">跳過符合規則的曲目</string>
+    <string name="switch_needs_access">請先授予通知存取權才能開啟。</string>
+    <string name="switch_on_reminder">離開此 App、關閉螢幕或在車上時仍會持續跳歌,直到你關閉開關或手機重新開機。</string>
+
+    <string name="notif_channel_paused">已暫停跳歌</string>
+    <string name="notif_paused_title">已暫停跳歌</string>
+    <string name="notif_paused_text">%1$s 連續跳過太多首。遇到不符合規則的曲目後會自動恢復。</string>
+
+    <string name="rules_keywords_title">關鍵字</string>
+    <string name="rules_regex_title">正規表達式</string>
+    <string name="rules_keyword_hint">新增關鍵字(任何語言)</string>
+    <string name="rules_regex_hint">新增正規表達式</string>
+    <string name="action_add">新增</string>
+    <string name="action_save">儲存</string>
+    <string name="action_edit">編輯</string>
+    <string name="action_delete">刪除</string>
+    <string name="error_blank">請先輸入內容。</string>
+    <string name="error_duplicate">此項目已存在。</string>
+    <string name="error_invalid_regex">無效的正規表達式:%1$s</string>
+
+    <string name="rule_simplified">跳過含簡體中文的標題</string>
+    <string name="players_title">受監聽的播放器</string>
+    <string name="players_add_title">從已安裝的媒體 App 新增</string>
+    <string name="action_remove">移除</string>
+
+    <string name="history_clear">清除紀錄</string>
+    <string name="history_empty">尚無跳過的曲目。</string>
+    <string name="history_clear_title">清除紀錄?</string>
+    <string name="history_clear_body">此裝置上所有跳過紀錄都會被刪除。</string>
+    <string name="history_clear_confirm">清除</string>
+    <string name="action_cancel">取消</string>
+
+    <string name="tab_home">首頁</string>
+    <string name="tab_rules">規則</string>
+    <string name="tab_history">紀錄</string>
+
+    <string name="settings_language">語言</string>
+    <string name="language_follow_system">跟隨系統</string>
+
+    <string name="battery_hint">如果過一陣子就不再跳歌,請將本 App 排除於電池最佳化之外。</string>
+    <string name="action_open_battery_settings">開啟電池設定</string>
+</resources>

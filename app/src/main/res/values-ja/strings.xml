@@ -1,0 +1,48 @@
+<resources>
+    <string name="status_access_missing_title">通知へのアクセス権限が必要です</string>
+    <string name="status_access_missing_body">Media Auto-Skipper は、他のアプリで再生中の曲を読み取り、不要な曲をスキップします。音声の再生や録音は一切行いません。システム設定で通知へのアクセスを許可してください。</string>
+    <string name="action_open_settings">通知アクセスの設定を開く</string>
+    <string name="status_access_granted">通知へのアクセスが許可されています。サービスの準備ができました。</string>
+
+    <string name="switch_label">条件に一致する曲をスキップ</string>
+    <string name="switch_needs_access">オンにするには、先に通知へのアクセスを許可してください。</string>
+    <string name="switch_on_reminder">アプリを閉じても、画面を消しても、車内でも、スイッチをオフにするか端末を再起動するまでスキップが続きます。</string>
+
+    <string name="notif_channel_paused">スキップを一時停止</string>
+    <string name="notif_paused_title">スキップを一時停止しました</string>
+    <string name="notif_paused_text">%1$s で連続してスキップしすぎました。条件に一致しない曲が来ると再開します。</string>
+
+    <string name="rules_keywords_title">キーワード</string>
+    <string name="rules_regex_title">正規表現</string>
+    <string name="rules_keyword_hint">キーワードを追加(言語は問いません)</string>
+    <string name="rules_regex_hint">正規表現を追加</string>
+    <string name="action_add">追加</string>
+    <string name="action_save">保存</string>
+    <string name="action_edit">編集</string>
+    <string name="action_delete">削除</string>
+    <string name="error_blank">先に内容を入力してください。</string>
+    <string name="error_duplicate">この項目はすでに登録されています。</string>
+    <string name="error_invalid_regex">無効な正規表現です: %1$s</string>
+
+    <string name="rule_simplified">簡体字中国語のタイトルをスキップ</string>
+    <string name="players_title">監視するプレーヤー</string>
+    <string name="players_add_title">インストール済みのメディアアプリから追加</string>
+    <string name="action_remove">削除</string>
+
+    <string name="history_clear">履歴を消去</string>
+    <string name="history_empty">スキップした曲はまだありません。</string>
+    <string name="history_clear_title">履歴を消去しますか?</string>
+    <string name="history_clear_body">この端末のスキップ履歴がすべて削除されます。</string>
+    <string name="history_clear_confirm">消去</string>
+    <string name="action_cancel">キャンセル</string>
+
+    <string name="tab_home">ホーム</string>
+    <string name="tab_rules">ルール</string>
+    <string name="tab_history">履歴</string>
+
+    <string name="settings_language">言語</string>
+    <string name="language_follow_system">システムに従う</string>
+
+    <string name="battery_hint">しばらくしてスキップが止まる場合は、このアプリをバッテリー最適化の対象から外してください。</string>
+    <string name="action_open_battery_settings">バッテリー設定を開く</string>
+</resources>

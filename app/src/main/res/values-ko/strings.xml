@@ -1,0 +1,48 @@
+<resources>
+    <string name="status_access_missing_title">알림 접근 권한이 필요합니다</string>
+    <string name="status_access_missing_body">Media Auto-Skipper는 다른 앱에서 재생 중인 곡을 읽어 원하지 않는 곡을 건너뜁니다. 소리를 재생하거나 녹음하지 않습니다. 시스템 설정에서 알림 접근 권한을 허용해 주세요.</string>
+    <string name="action_open_settings">알림 접근 설정 열기</string>
+    <string name="status_access_granted">알림 접근 권한이 허용되었습니다. 서비스가 준비되었습니다.</string>
+
+    <string name="switch_label">조건에 맞는 곡 건너뛰기</string>
+    <string name="switch_needs_access">켜려면 먼저 알림 접근 권한을 허용하세요.</string>
+    <string name="switch_on_reminder">앱을 벗어나거나 화면이 꺼져 있거나 차 안에 있어도, 스위치를 끄거나 휴대폰을 다시 시작할 때까지 계속 건너뜁니다.</string>
+
+    <string name="notif_channel_paused">건너뛰기 일시 중지</string>
+    <string name="notif_paused_title">건너뛰기가 일시 중지되었습니다</string>
+    <string name="notif_paused_text">%1$s에서 연속으로 너무 많이 건너뛰었습니다. 조건에 맞지 않는 곡이 나오면 다시 시작합니다.</string>
+
+    <string name="rules_keywords_title">키워드</string>
+    <string name="rules_regex_title">정규식</string>
+    <string name="rules_keyword_hint">키워드 추가(모든 언어)</string>
+    <string name="rules_regex_hint">정규식 추가</string>
+    <string name="action_add">추가</string>
+    <string name="action_save">저장</string>
+    <string name="action_edit">편집</string>
+    <string name="action_delete">삭제</string>
+    <string name="error_blank">먼저 내용을 입력하세요.</string>
+    <string name="error_duplicate">이미 있는 항목입니다.</string>
+    <string name="error_invalid_regex">잘못된 정규식입니다: %1$s</string>
+
+    <string name="rule_simplified">중국어 간체 제목 건너뛰기</string>
+    <string name="players_title">감시할 플레이어</string>
+    <string name="players_add_title">설치된 미디어 앱에서 추가</string>
+    <string name="action_remove">제거</string>
+
+    <string name="history_clear">기록 지우기</string>
+    <string name="history_empty">건너뛴 곡이 아직 없습니다.</string>
+    <string name="history_clear_title">기록을 지울까요?</string>
+    <string name="history_clear_body">이 기기의 모든 건너뛰기 기록이 삭제됩니다.</string>
+    <string name="history_clear_confirm">지우기</string>
+    <string name="action_cancel">취소</string>
+
+    <string name="tab_home">홈</string>
+    <string name="tab_rules">규칙</string>
+    <string name="tab_history">기록</string>
+
+    <string name="settings_language">언어</string>
+    <string name="language_follow_system">시스템 설정 따르기</string>
+
+    <string name="battery_hint">잠시 후 건너뛰기가 멈추면 이 앱을 배터리 최적화에서 제외하세요.</string>
+    <string name="action_open_battery_settings">배터리 설정 열기</string>
+</resources>
