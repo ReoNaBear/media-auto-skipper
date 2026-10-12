@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -21,6 +22,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.mediaautoskipper.R
+import com.mediaautoskipper.settings.DislikeRules
 import com.mediaautoskipper.settings.EditResult
 import com.mediaautoskipper.settings.RuleEdits
 import com.mediaautoskipper.settings.RuleKind
@@ -28,6 +30,7 @@ import com.mediaautoskipper.settings.RuleKind
 object RuleTags {
     fun input(kind: RuleKind) = "rule_input_$kind"
     fun add(kind: RuleKind) = "rule_add_$kind"
+    fun dislike(kind: RuleKind, item: String) = "rule_dislike_${kind}_$item"
 }
 
 /** One editable list of rules (keywords or regular expressions). */
@@ -37,6 +40,10 @@ fun RuleSection(
     items: List<String>,
     onChange: (List<String>) -> Unit,
     modifier: Modifier = Modifier,
+    /** Rule keys (see `DislikeRules`) whose "also mark as dislike" option is on. */
+    dislikeKeys: Set<String> = emptySet(),
+    /** Called with the rule key and the new state; when null, the option is not shown. */
+    onDislikeChange: ((String, Boolean) -> Unit)? = null,
 ) {
     var input by remember { mutableStateOf("") }
     var editing by remember { mutableStateOf<Int?>(null) }
@@ -63,6 +70,14 @@ fun RuleSection(
                         input = ""
                     }
                 }) { Text(stringResource(R.string.action_delete)) }
+            }
+            if (onDislikeChange != null) {
+                val key = DislikeRules.key(kind, item)
+                DislikeOption(
+                    checked = key in dislikeKeys,
+                    onCheckedChange = { onDislikeChange(key, it) },
+                    modifier = Modifier.testTag(RuleTags.dislike(kind, item)),
+                )
             }
         }
 
@@ -94,6 +109,20 @@ fun RuleSection(
             },
             modifier = Modifier.padding(bottom = 8.dp).testTag(RuleTags.add(kind)),
         ) { Text(stringResource(if (editing == null) R.string.action_add else R.string.action_save)) }
+    }
+}
+
+/** The "also mark as dislike" checkbox with its label. */
+@Composable
+fun DislikeOption(
+    checked: Boolean,
+    onCheckedChange: (Boolean) -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+) {
+    Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+        Checkbox(checked = checked, onCheckedChange = onCheckedChange, enabled = enabled, modifier = modifier)
+        Text(stringResource(R.string.dislike_option), style = MaterialTheme.typography.bodySmall)
     }
 }
 

@@ -1,5 +1,8 @@
 package com.mediaautoskipper.ui
 
+import androidx.compose.ui.test.assertIsEnabled
+import androidx.compose.ui.test.assertIsNotEnabled
+import androidx.compose.ui.test.assertIsOff
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
@@ -41,5 +44,32 @@ class PlayersSectionTest {
         rule.onNodeWithText("Remove").performClick()
         assertEquals(listOf("org.other.player"), added)
         assertEquals(listOf(ytm.pkg), removed)
+    }
+
+    @Test
+    fun simplifiedDislikeOptionIsAvailableAndShowsTheAccountNote() {
+        val changes = mutableListOf<Boolean>()
+        rule.setContent {
+            RuleTogglesAndPlayers(
+                true, {}, listOf(ytm), emptyList(), {}, {},
+                simplifiedDislike = false,
+                onSimplifiedDislikeChange = { changes += it },
+            )
+        }
+        rule.onNodeWithTag(PlayerTags.SIMPLIFIED_DISLIKE).assertIsEnabled().assertIsOff().performClick()
+        assertEquals(listOf(true), changes)
+        rule.onNodeWithText("cannot undo it", substring = true).assertExists()
+    }
+
+    @Test
+    fun simplifiedDislikeOptionIsDisabledWhileTheRuleIsOff() {
+        rule.setContent {
+            RuleTogglesAndPlayers(
+                false, {}, listOf(ytm), emptyList(), {}, {},
+                simplifiedDislike = true,
+                onSimplifiedDislikeChange = {},
+            )
+        }
+        rule.onNodeWithTag(PlayerTags.SIMPLIFIED_DISLIKE).assertIsNotEnabled()
     }
 }

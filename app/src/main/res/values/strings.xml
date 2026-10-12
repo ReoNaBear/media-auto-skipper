@@ -47,4 +47,8 @@
 
     <string name="battery_hint">If skipping stops after a while, exclude this app from battery optimization.</string>
     <string name="action_open_battery_settings">Open battery settings</string>
+
+    <string name="dislike_option">Also mark as dislike</string>
+    <string name="dislike_note">Matching also sends “Dislike” to the player. This syncs to your account, changes your recommendations, and this app cannot undo it.</string>
+    <string name="history_disliked">Disliked</string>
 </resources>

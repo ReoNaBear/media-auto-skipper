@@ -36,3 +36,22 @@ On the emulator with real YouTube Music, keyword "wish you were", screen state `
 
 - Spotify (needs an account) and a YouTube skip test inside a playlist.
 - Android Auto (Desktop Head Unit) checks, and screen-off with real YouTube / Spotify (task 4.5).
+
+## Dislike probe and test (change `dislike-on-skip`)
+
+Emulator (API 37), real apps, 2026-10-12, probe extended to print rating and custom actions.
+
+| Player | Custom actions | Rating | Result |
+| --- | --- | --- | --- |
+| YouTube Music | `thumbs_up_action` (Like), `shuffle_action`, `loop_mode_action`, `thumbs_down_action` (Dislike) | `ratingType=2` (thumbs), `ACTION_SET_RATING` advertised, `USER_RATING` published | Dislike works through `sendCustomAction("thumbs_down_action")` |
+| YouTube (video app) | none | `ratingType=2` and `ACTION_SET_RATING` advertised, but `USER_RATING` is null | No dislike action to send, so a marked rule only skips. `transportControls.setRating(...)` might work; not tried |
+| Spotify | not tested (no account) | not tested | The fake player publishes the same action and rating; the full path works there |
+
+What was observed on YouTube Music:
+
+- A dislike sent on a track that had been playing for a while was applied and YouTube Music moved to the next track by itself about 0.2 s later. A skip on top of that would drop a second track, so the app now sends the skip only when the player did not move on within 0.6 s.
+- A dislike sent 0.7 s after the track started was not reliably applied; the rating in the metadata can also be stale for a moment after a track change, which is how a repeated send can toggle an existing dislike off. Waiting 2 s before sending worked in the final run (dislike sent at +1.8 s, track changed 0.15 s later). This was tuned on one session, so treat 2 s as a starting point.
+- The metadata rating (`USER_RATING`) lagged behind the real state, so it is a guard, not a guarantee.
+- Latency with a dislike: 3.5 s from the first metadata to the finished skip was measured with a 1.5 s advance check; with the final 0.6 s check, about 2.7 s is expected (not measured again). Skip-only rules keep the earlier 1 to 20 ms service-side time.
+- Effect on the account: tracks used in these tests were disliked on the signed-in YouTube Music account, among them: TikTok (Blueface), SMOOTH DJ LOVE TIKTOK, Call of Silence (TikTok remix), plus two from timing experiments, "Choose a Player" and "Always Loving Miracles".
+

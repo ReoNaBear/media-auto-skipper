@@ -30,6 +30,16 @@ object QueueProbe {
                 "skipToNext=${ps != null && (ps.actions and android.media.session.PlaybackState.ACTION_SKIP_TO_NEXT) != 0L} " +
                 "skipToQueueItem=${ps != null && (ps.actions and android.media.session.PlaybackState.ACTION_SKIP_TO_QUEUE_ITEM) != 0L}",
         )
+        Log.i(
+            TAG,
+            "rating: ratingType=${controller.ratingType} " +
+                "setRating=${ps != null && (ps.actions and android.media.session.PlaybackState.ACTION_SET_RATING) != 0L} " +
+                "userRating=${md?.getRating("android.media.metadata.USER_RATING")} " +
+                "overallRating=${md?.getRating("android.media.metadata.RATING")}",
+        )
+        val custom = ps?.customActions.orEmpty()
+        Log.i(TAG, "customActions: ${custom.size}")
+        custom.forEach { Log.i(TAG, "  action=${it.action} name=${it.name}") }
         val queue = controller.queue
         if (queue == null) {
             Log.i(TAG, "queue: null (not published)")

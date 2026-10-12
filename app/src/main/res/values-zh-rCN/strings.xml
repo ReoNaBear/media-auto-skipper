@@ -45,4 +45,8 @@
 
     <string name="battery_hint">如果过一会儿就不再跳歌,请将本应用排除在电池优化之外。</string>
     <string name="action_open_battery_settings">打开电池设置</string>
+
+    <string name="dislike_option">同时标为不喜欢</string>
+    <string name="dislike_note">命中时会同时向播放器发送“不喜欢”。这会同步到你的账号并影响推荐，本应用无法撤销。</string>
+    <string name="history_disliked">已不喜欢</string>
 </resources>

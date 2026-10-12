@@ -38,6 +38,7 @@ object HistoryTags {
     const val CONFIRM = "history_clear_confirm"
     const val CANCEL = "history_clear_cancel"
     fun chip(pkg: String) = "history_chip_$pkg"
+    fun disliked(id: Long) = "history_disliked_$id"
 }
 
 @Composable
@@ -105,6 +106,14 @@ fun HistoryContent(
                             format.format(Date(r.timeMillis)) + " · " + r.reason,
                             style = MaterialTheme.typography.bodySmall,
                         )
+                        if (r.disliked) {
+                            Text(
+                                stringResource(R.string.history_disliked),
+                                style = MaterialTheme.typography.labelSmall,
+                                color = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier.testTag(HistoryTags.disliked(r.id)),
+                            )
+                        }
                     }
                 }
             }

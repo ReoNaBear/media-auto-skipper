@@ -1,6 +1,7 @@
 package com.mediaautoskipper.history
 
 import android.content.Context
+import androidx.room.ColumnInfo
 import androidx.room.Dao
 import androidx.room.Database
 import androidx.room.Entity
@@ -10,6 +11,8 @@ import androidx.room.Query
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.Transaction
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
 import kotlinx.coroutines.flow.Flow
 
 @Entity(tableName = "skip_record")
@@ -20,6 +23,8 @@ data class SkipRecord(
     val title: String,
     val artist: String,
     val reason: String,
+    /** True when the player's dislike action was sent together with this skip. */
+    @ColumnInfo(defaultValue = "0") val disliked: Boolean = false,
 )
 
 @Dao
@@ -59,12 +64,21 @@ abstract class SkipHistoryDao {
     }
 }
 
-@Database(entities = [SkipRecord::class], version = 1, exportSchema = false)
+@Database(entities = [SkipRecord::class], version = 2, exportSchema = false)
 abstract class HistoryDatabase : RoomDatabase() {
     abstract fun dao(): SkipHistoryDao
 
     companion object {
+        /** Version 2 adds [SkipRecord.disliked]; existing records count as no dislike sent. */
+        val MIGRATION_1_2 = object : Migration(1, 2) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE skip_record ADD COLUMN disliked INTEGER NOT NULL DEFAULT 0")
+            }
+        }
+
         fun open(context: Context): HistoryDatabase =
-            Room.databaseBuilder(context.applicationContext, HistoryDatabase::class.java, "history.db").build()
+            Room.databaseBuilder(context.applicationContext, HistoryDatabase::class.java, "history.db")
+                .addMigrations(MIGRATION_1_2)
+                .build()
     }
 }

@@ -72,4 +72,16 @@ class HistoryContentTest {
         show(emptyList())
         rule.onNodeWithTag(HistoryTags.EMPTY).assertExists()
     }
+
+    @Test
+    fun dislikedRecordShowsTheMarkerAndPlainSkipDoesNot() {
+        show(
+            listOf(
+                r(1, 1000, ytm, "Plain skip"),
+                r(2, 2000, ytm, "Skipped and disliked").copy(disliked = true),
+            ),
+        )
+        rule.onNodeWithTag(HistoryTags.disliked(2)).assertExists()
+        rule.onNodeWithTag(HistoryTags.disliked(1)).assertDoesNotExist()
+    }
 }

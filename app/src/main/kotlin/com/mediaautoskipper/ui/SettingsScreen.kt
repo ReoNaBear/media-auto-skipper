@@ -15,6 +15,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import com.mediaautoskipper.MasApp
 import com.mediaautoskipper.settings.AppSettings
+import com.mediaautoskipper.settings.DislikeRules
 import com.mediaautoskipper.settings.RuleKind
 import kotlinx.coroutines.launch
 
@@ -39,9 +40,23 @@ fun SettingsScreen() {
             candidates = candidates,
             onRemove = { pkg -> scope.launch { store.setMonitoredPackages(settings.monitoredPackages - pkg) } },
             onAdd = { pkg -> scope.launch { store.setMonitoredPackages(settings.monitoredPackages + pkg) } },
+            simplifiedDislike = DislikeRules.SIMPLIFIED in settings.dislikeRules,
+            onSimplifiedDislikeChange = { scope.launch { store.setDislike(DislikeRules.SIMPLIFIED, it) } },
         )
-        RuleSection(RuleKind.KEYWORD, settings.keywords, onChange = { scope.launch { store.setKeywords(it) } })
-        RuleSection(RuleKind.REGEX, settings.regexes, onChange = { scope.launch { store.setRegexes(it) } })
+        RuleSection(
+            RuleKind.KEYWORD,
+            settings.keywords,
+            onChange = { scope.launch { store.setKeywords(it) } },
+            dislikeKeys = settings.dislikeRules,
+            onDislikeChange = { key, on -> scope.launch { store.setDislike(key, on) } },
+        )
+        RuleSection(
+            RuleKind.REGEX,
+            settings.regexes,
+            onChange = { scope.launch { store.setRegexes(it) } },
+            dislikeKeys = settings.dislikeRules,
+            onDislikeChange = { key, on -> scope.launch { store.setDislike(key, on) } },
+        )
         LanguageSection()
     }
 }

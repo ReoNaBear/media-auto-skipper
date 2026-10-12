@@ -76,4 +76,41 @@ class SkipHistoryTest {
         dao.clear()
         assertTrue(dao.observeAll().first().isEmpty())
     }
+
+    @Test
+    fun dislikedFlagIsStoredAndDefaultsToFalse() = runBlocking {
+        dao.record(SkipRecord(timeMillis = 1, pkg = "p", title = "a", artist = "x", reason = "r", disliked = true))
+        dao.record(SkipRecord(timeMillis = 2, pkg = "p", title = "b", artist = "x", reason = "r"))
+        val byTitle = dao.observeAll().first().associateBy { it.title }
+        assertTrue(byTitle.getValue("a").disliked)
+        assertEquals(false, byTitle.getValue("b").disliked)
+    }
+
+    @Test
+    fun upgradingFromVersion1KeepsOldRecordsAsNotDisliked() = runBlocking {
+        val context = ApplicationProvider.getApplicationContext<Context>()
+        val file = context.getDatabasePath("old-history.db").also { it.parentFile?.mkdirs(); it.delete() }
+        android.database.sqlite.SQLiteDatabase.openOrCreateDatabase(file, null).use { old ->
+            old.execSQL(
+                "CREATE TABLE skip_record (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                    "timeMillis INTEGER NOT NULL, pkg TEXT NOT NULL, title TEXT NOT NULL, " +
+                    "artist TEXT NOT NULL, reason TEXT NOT NULL)",
+            )
+            old.execSQL("INSERT INTO skip_record (timeMillis, pkg, title, artist, reason) VALUES (7, 'p', 'old', 'x', 'keyword:Mix')")
+            old.version = 1
+        }
+        val upgraded = Room.databaseBuilder(context, HistoryDatabase::class.java, "old-history.db")
+            .addMigrations(HistoryDatabase.MIGRATION_1_2)
+            .allowMainThreadQueries()
+            .build()
+        try {
+            val r = upgraded.dao().observeAll().first().single()
+            assertEquals("old", r.title)
+            assertEquals(false, r.disliked)
+            upgraded.dao().record(SkipRecord(timeMillis = 8, pkg = "p", title = "new", artist = "x", reason = "r", disliked = true))
+            assertEquals(2, upgraded.dao().count())
+        } finally {
+            upgraded.close()
+        }
+    }
 }

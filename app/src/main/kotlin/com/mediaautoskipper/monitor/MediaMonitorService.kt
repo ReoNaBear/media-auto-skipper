@@ -9,8 +9,11 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.ApplicationInfo
 import android.media.MediaMetadata
+import android.media.Rating
 import android.media.session.MediaController
 import android.media.session.MediaSessionManager
+import android.os.Handler
+import android.os.Looper
 import android.os.SystemClock
 import android.provider.Settings
 import android.service.notification.NotificationListenerService
@@ -54,6 +57,8 @@ class MediaMonitorService : NotificationListenerService() {
         attach(controllers.orEmpty())
     }
 
+    private val handler = Handler(Looper.getMainLooper())
+
     override fun onCreate() {
         super.onCreate()
         val app = application as MasApp
@@ -68,12 +73,14 @@ class MediaMonitorService : NotificationListenerService() {
                             title = event.title,
                             artist = event.artist,
                             reason = event.reason,
+                            disliked = event.disliked,
                         ),
                     )
                 }
             },
             onLoopPaused = ::notifyPaused,
             log = { Log.i(TAG, it) },
+            schedule = { delayMs, task -> handler.postDelayed(task, delayMs) },
         )
         app.settingsStore.settings.onEach { settings = it }.launchIn(scope)
         app.settingsStore.enableState.onEach { enableState = it }.launchIn(scope)
@@ -88,12 +95,20 @@ class MediaMonitorService : NotificationListenerService() {
         Log.i(TAG, "listener connected")
     }
 
-    /** Debug builds only: `adb shell am broadcast -a com.mediaautoskipper.PROBE` dumps every active session. */
+    /** Debug builds only: `adb shell am broadcast -a com.mediaautoskipper.PROBE` dumps every active session (see `--es send`). */
     private fun registerProbeReceiver(component: ComponentName) {
         if (applicationInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE == 0 || probeReceiver != null) return
         val receiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context, intent: Intent) {
-                QueueProbe.dumpAll(sessionManager.getActiveSessions(component))
+                val sessions = sessionManager.getActiveSessions(component)
+                // `--es send <action id>` sends that custom action to every active session, for timing experiments.
+                intent.getStringExtra("send")?.let { id ->
+                    sessions.forEach {
+                        it.transportControls.sendCustomAction(id, null)
+                        Log.i(TAG, "probe sent custom action $id to ${it.packageName}")
+                    }
+                }
+                QueueProbe.dumpAll(sessions)
             }
         }
         registerReceiver(receiver, IntentFilter(PROBE_ACTION), Context.RECEIVER_EXPORTED)
@@ -106,6 +121,7 @@ class MediaMonitorService : NotificationListenerService() {
     }
 
     override fun onDestroy() {
+        handler.removeCallbacksAndMessages(null)
         detachAll()
         scope.cancel()
         super.onDestroy()
@@ -169,6 +185,18 @@ private class ControllerTarget(private val controller: MediaController) : SkipTa
     override val packageName: String get() = controller.packageName
 
     override fun skipToNext() = controller.transportControls.skipToNext()
+
+    override fun dislikeActionId(): String? = DislikeSupport.findActionId(
+        controller.playbackState?.customActions.orEmpty().map { CustomActionInfo(it.action, it.name.toString()) },
+    )
+
+    override fun ratingState(): RatingState {
+        val rating = controller.metadata?.getRating(MediaMetadata.METADATA_KEY_USER_RATING)
+        val thumbs = rating != null && rating.ratingStyle == Rating.RATING_THUMB_UP_DOWN
+        return RatingState.of(published = thumbs, rated = rating?.isRated == true, thumbUp = rating?.isThumbUp == true)
+    }
+
+    override fun sendCustomAction(id: String) = controller.transportControls.sendCustomAction(id, null)
 
     override fun sendNextKey() {
         controller.dispatchMediaButtonEvent(KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_MEDIA_NEXT))

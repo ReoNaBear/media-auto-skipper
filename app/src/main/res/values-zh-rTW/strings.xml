@@ -45,4 +45,8 @@
 
     <string name="battery_hint">如果過一陣子就不再跳歌,請將本 App 排除於電池最佳化之外。</string>
     <string name="action_open_battery_settings">開啟電池設定</string>
+
+    <string name="dislike_option">同時標為不喜歡</string>
+    <string name="dislike_note">命中時會同時對播放器送出「不喜歡」。這會同步到你的帳號並影響推薦，本 App 無法取消。</string>
+    <string name="history_disliked">已不喜歡</string>
 </resources>

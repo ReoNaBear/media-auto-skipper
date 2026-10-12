@@ -1,6 +1,7 @@
 package com.mediaautoskipper.settings
 
 import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.MutablePreferences
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
@@ -23,6 +24,8 @@ data class AppSettings(
     val keywords: List<String> = DefaultBlacklist.keywords,
     val regexes: List<String> = emptyList(),
     val monitoredPackages: List<String> = DefaultPlayers.packages,
+    /** Rule keys (see [DislikeRules]) whose matches also send the player's dislike action. Empty by default. */
+    val dislikeRules: Set<String> = emptySet(),
 ) {
     val filterConfig: FilterConfig get() = FilterConfig(simplifiedEnabled, keywords, regexes)
 }
@@ -44,6 +47,7 @@ class SettingsStore(private val dataStore: DataStore<Preferences>) {
             keywords = p[KEYWORDS]?.let(::decode) ?: DefaultBlacklist.keywords,
             regexes = p[REGEXES]?.let(::decode) ?: emptyList(),
             monitoredPackages = p[PACKAGES]?.let(::decode) ?: DefaultPlayers.packages,
+            dislikeRules = p[DISLIKE_RULES]?.let(::decode)?.toSet() ?: emptySet(),
         )
     }
 
@@ -56,12 +60,35 @@ class SettingsStore(private val dataStore: DataStore<Preferences>) {
         dataStore.edit { it[SIMPLIFIED] = enabled }
     }
 
+    /** Replaces the keyword list; dislike flags follow edited entries and are dropped for removed ones. */
     suspend fun setKeywords(keywords: List<String>) {
-        dataStore.edit { it[KEYWORDS] = encode(keywords) }
+        dataStore.edit {
+            val old = it[KEYWORDS]?.let(::decode) ?: DefaultBlacklist.keywords
+            reconcileFlags(it, RuleKind.KEYWORD, old, keywords)
+            it[KEYWORDS] = encode(keywords)
+        }
     }
 
+    /** Replaces the regex list; dislike flags follow edited entries and are dropped for removed ones. */
     suspend fun setRegexes(regexes: List<String>) {
-        dataStore.edit { it[REGEXES] = encode(regexes) }
+        dataStore.edit {
+            val old = it[REGEXES]?.let(::decode) ?: emptyList()
+            reconcileFlags(it, RuleKind.REGEX, old, regexes)
+            it[REGEXES] = encode(regexes)
+        }
+    }
+
+    /** Turns the "also dislike" option of one rule (see [DislikeRules.key]) on or off. */
+    suspend fun setDislike(ruleKey: String, enabled: Boolean) {
+        dataStore.edit {
+            val current = it[DISLIKE_RULES]?.let(::decode)?.toSet() ?: emptySet()
+            it[DISLIKE_RULES] = encode((if (enabled) current + ruleKey else current - ruleKey).toList())
+        }
+    }
+
+    private fun reconcileFlags(p: MutablePreferences, kind: RuleKind, old: List<String>, new: List<String>) {
+        val flags = p[DISLIKE_RULES]?.let(::decode)?.toSet() ?: return
+        p[DISLIKE_RULES] = encode(DislikeRules.reconcile(flags, kind, old, new).toList())
     }
 
     suspend fun setMonitoredPackages(packages: List<String>) {
@@ -83,6 +110,7 @@ class SettingsStore(private val dataStore: DataStore<Preferences>) {
         val KEYWORDS = stringPreferencesKey("keywords")
         val REGEXES = stringPreferencesKey("regexes")
         val PACKAGES = stringPreferencesKey("monitored_packages")
+        val DISLIKE_RULES = stringPreferencesKey("dislike_rules")
 
         // One entry per line; entries never contain line breaks (they are flattened on write).
         fun encode(items: List<String>): String =

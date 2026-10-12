@@ -15,7 +15,9 @@
 
 An open-source Android app that **skips tracks you do not want to hear**. It never plays music itself. It watches the media sessions of your players (YouTube Music, YouTube, Spotify, ...) and presses "next" when the title or artist matches your rules, such as Simplified Chinese titles, "Full Album" compilations, or your own keywords and regular expressions.
 
-> Status: version 0.1.1 (pre-release). Verified on an emulator and on a Sharp R11 phone with Android 16 (YouTube and YouTube Music); real-car Android Auto and real Spotify are **not verified yet**. See [Verification status](#verification-status).
+> Status: version 0.2.0 (pre-release). Verified on an emulator and on a Sharp R11 phone with Android 16 (YouTube and YouTube Music); real-car Android Auto and real Spotify are **not verified yet**. See [Verification status](#verification-status).
+
+> **Works offline by design.** The app declares no internet permission, so it cannot send anything off your phone. Settings and skip history stay on the device. You can check this in `app/src/main/AndroidManifest.xml`.
 
 <p align="center">
   <img src="docs/screenshots/home.png" width="240" alt="Home">
@@ -25,9 +27,9 @@ An open-source Android app that **skips tracks you do not want to hear**. It nev
 
 ## Download
 
-**Version 0.1.1 (pre-release)**
+**Version 0.2.0 (pre-release)**
 
-1. Open the [Releases page](https://github.com/ReoNaBear/media-auto-skipper/releases/latest) and download `media-auto-skipper-v0.1.1.apk`.
+1. Open the [Releases page](https://github.com/ReoNaBear/media-auto-skipper/releases/latest) and download `media-auto-skipper-v0.2.0.apk`.
 2. On your Android phone, open the file and allow "Install unknown apps" for your browser or file manager when asked.
 3. Follow [Use](#use) below.
 
@@ -44,21 +46,22 @@ Want to build it yourself or contribute? See [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ### Rules
 
-- **Simplified Chinese**: a title or artist is flagged when it contains a character that exists only in Simplified Chinese. The built-in table is deliberately conservative. Characters shared with Japanese (国, 学, 会 ...) or valid in Traditional Chinese are left out, and any text containing kana or Hangul is never flagged. The cost: a Simplified title made only of shared characters is missed.
+- **Simplified Chinese**: a title or artist is flagged when it contains a character that exists only in Simplified Chinese. The built-in table (about 2,000 characters) is generated from Unicode's Unihan data, GB2312, Big5 and JIS X 0208 by `tools/generate_simplified_chars.py`, and is deliberately conservative. Characters shared with Japanese (国, 学, 会 ...) or valid in Traditional Chinese are left out, and any text containing kana or Hangul is never flagged. The cost: a Simplified title made only of shared characters is missed.
 - **Keywords**: matched literally, case-insensitively, after Unicode NFKC normalization. ASCII keywords match whole words ("Mix" matches "Summer Mix" but not "Remix"); other scripts match as substrings. There is no Simplified/Traditional conversion, so a keyword in one language never fires on another.
 - **Regular expressions**: case-insensitive, validated when saved, with a 50 ms time budget per match so a bad pattern cannot stall the service.
 - Defaults: 合輯, 合辑, 精選, 精选, Full Album, Mix. You can remove any of them.
+- **Also mark as dislike** (optional, off by default, per rule): every keyword, every regular expression and the Simplified Chinese rule has a checkbox. When a marked rule matches, the app sends the player's own "Dislike" action and then skips. This works only where the player publishes a dislike action in its media session; YouTube Music does, the YouTube video app does not (a marked rule then only skips). A dislike is written to your account and changes your recommendations; the app cannot undo it. To avoid undoing an existing dislike and to let the player settle, a marked match waits about 2 seconds before acting, so it is slower than a plain skip. Verified on an emulator with YouTube Music only; see `docs/queue-probe-notes.md`.
 
 ### Safety
 
 - **Master switch** (off by default). The service ignores every session while it is off. After a device reboot it is off again until you turn it on.
 - **Debounce**: repeated metadata for the same track triggers one skip.
 - **Loop protection**: 20 skips within 60 seconds pause skipping and post a notification (it was 10 in the first build and was raised to 20 after a phone test, where 10 videos in a row stopped it). These are design parameters, not measurements.
-- **Skip history**: every skip is stored on the device only (time, player, title, artist, reason), capped at 1000 records, filterable by player and clearable.
+- **Skip history**: every skip is stored on the device only (time, player, title, artist, reason, whether a dislike was sent), capped at 1000 records, filterable by player and clearable.
 
 ## What it does not do
 
-No audio playback, recording or capture. No AccessibilityService. No reverse engineering of any app's API. No network access. Out of scope: disliking tracks, hiding Shorts, WebView, Google sign-in, iOS (iOS has no equivalent of reading other apps' media sessions).
+No audio playback, recording or capture. No AccessibilityService. No reverse engineering of any app's API. No network access. Out of scope: "not interested" (YouTube Music publishes no such action), hiding Shorts, WebView, Google sign-in, iOS (iOS has no equivalent of reading other apps' media sessions).
 
 ## Languages
 
@@ -109,6 +112,10 @@ Create `local.properties` with `sdk.dir=<path to your Android SDK>` (use forward
 - `fake-player/`: test-only stand-in player
 - `docs/spectra/`: specs and change history (Spectra SDD)
 
+## Disclaimer
+
+Media Auto-Skipper is an independent project. It is not affiliated with, endorsed by or sponsored by Google, YouTube, YouTube Music or Spotify. All product names and trademarks belong to their owners and are used only to say which players the app works with.
+
 ## License
 
 [MIT](LICENSE)
@@ -126,7 +133,9 @@ Create `local.properties` with `sdk.dir=<path to your Android SDK>` (use forward
 
 這是一個開源的 Android App，**自動跳過你不想聽的曲目**。它自己不播放音樂，只監聽播放器（YouTube Music、YouTube、Spotify 等）的媒體工作階段，當標題或藝人符合你的規則（例如簡體中文標題、「Full Album」合輯，或你自訂的關鍵字與正規表達式）時，替你按下「下一首」。
 
-> 目前狀態：版本 0.1.1（預覽版）。已在模擬器與 Android 16 的 Sharp R11 手機上驗證（YouTube 與 YouTube Music）；實車 Android Auto 與真實 Spotify **尚未驗證**。詳見[驗證狀態](#驗證狀態)。
+> 目前狀態：版本 0.2.0（預覽版）。已在模擬器與 Android 16 的 Sharp R11 手機上驗證（YouTube 與 YouTube Music）；實車 Android Auto 與真實 Spotify **尚未驗證**。詳見[驗證狀態](#驗證狀態)。
+
+> **設計上完全離線。** App 沒有宣告網路權限，不可能把任何資料傳出手機；設定與跳過紀錄都只存在手機裡。你可以在 `app/src/main/AndroidManifest.xml` 自行檢查。
 
 <p align="center">
   <img src="docs/screenshots/home.png" width="240" alt="首頁">
@@ -136,9 +145,9 @@ Create `local.properties` with `sdk.dir=<path to your Android SDK>` (use forward
 
 ## 下載
 
-**版本 0.1.1（預覽版）**
+**版本 0.2.0（預覽版）**
 
-1. 開啟 [Releases 頁面](https://github.com/ReoNaBear/media-auto-skipper/releases/latest)，下載 `media-auto-skipper-v0.1.1.apk`。
+1. 開啟 [Releases 頁面](https://github.com/ReoNaBear/media-auto-skipper/releases/latest)，下載 `media-auto-skipper-v0.2.0.apk`。
 2. 在手機上點開這個檔案。系統詢問時，允許瀏覽器或檔案管理員「安裝不明應用程式」。
 3. 接著照下方[使用方式](#使用方式)操作。
 
@@ -155,21 +164,22 @@ Create `local.properties` with `sdk.dir=<path to your Android SDK>` (use forward
 
 ### 規則
 
-- **簡體中文**：標題或藝人含有「只存在於簡體中文」的字就會被標記。內建字表刻意保守：與日文共用的字（国、学、会 ……）或繁體也有效的字都不收，含日文假名或韓文字母的文字一律不標記。代價是只由共用字組成的簡體標題會漏掉。
+- **簡體中文**：標題或藝人含有「只存在於簡體中文」的字就會被標記。內建字表（約 2,000 字）由 `tools/generate_simplified_chars.py` 依 Unicode Unihan 資料、GB2312、Big5 與 JIS X 0208 產生，並刻意保守：與日文共用的字（国、学、会 ……）或繁體也有效的字都不收，含日文假名或韓文字母的文字一律不標記。代價是只由共用字組成的簡體標題會漏掉。
 - **關鍵字**：經 Unicode NFKC 正規化後，以字面、不分大小寫比對。ASCII 關鍵字須為完整單字（「Mix」會命中「Summer Mix」，不會命中「Remix」）；其他文字以子字串比對。不做繁簡轉換，所以某語言的關鍵字不會誤中另一種語言。
 - **正規表達式**：不分大小寫，儲存時會驗證，每次比對有 50 毫秒時間上限，避免壞掉的規則拖垮服務。
 - 預設關鍵字：合輯、合辑、精選、精选、Full Album、Mix，都可以移除。
+- **同時標為不喜歡**（選用，預設關閉，每條規則各自設定）：每個關鍵字、每個正規表達式與簡體中文規則都有一個勾選框。勾選的規則命中時，App 會先對播放器送出它自己公開的「不喜歡」動作，再跳過。只有播放器在媒體工作階段公開不喜歡動作時才有效：YouTube Music 有，YouTube 影片版沒有（此時勾選的規則只會跳過）。不喜歡會寫進你的帳號並影響推薦，本 App 無法取消。為了不取消原有的不喜歡，並讓播放器穩定下來，勾選的規則命中後會等約 2 秒才動作，比單純跳過慢。目前只在模擬器上用 YouTube Music 驗證，詳見 `docs/queue-probe-notes.md`。
 
 ### 安全機制
 
 - **啟用總開關**（預設關閉）：關閉時服務忽略所有工作階段；裝置重新開機後會回到關閉，需要再手動開啟。
 - **防抖動**：同一首歌重複送出的曲目資訊只會跳一次。
 - **連跳保護**：60 秒內連跳 20 次就暫停並發出通知（第一版是 10 次，實機測試時連跳 10 部影片就被停下來，所以調高到 20）。這兩個數字是設計參數，不是量測結果。
-- **跳過紀錄**：每次跳歌只存在本機（時間、播放器、標題、藝人、原因），最多 1000 筆，可依播放器篩選與清除。
+- **跳過紀錄**：每次跳歌只存在本機（時間、播放器、標題、藝人、原因、是否送出不喜歡），最多 1000 筆，可依播放器篩選與清除。
 
 ## 不做的事
 
-不播放、不錄製、不擷取任何聲音；不使用 AccessibilityService；不逆向任何 App 的 API；不連網。範圍外：不喜歡（dislike）、隱藏 Shorts、WebView、Google 登入、iOS（iOS 沒有讀取其他 App 媒體工作階段的對應機制）。
+不播放、不錄製、不擷取任何聲音；不使用 AccessibilityService；不逆向任何 App 的 API；不連網。範圍外：「我不感興趣」（YouTube Music 沒有公開對應動作）、隱藏 Shorts、WebView、Google 登入、iOS（iOS 沒有讀取其他 App 媒體工作階段的對應機制）。
 
 ## 語言
 
@@ -219,6 +229,10 @@ Create `local.properties` with `sdk.dir=<path to your Android SDK>` (use forward
 - `app/`：服務、設定（DataStore）、紀錄（Room）、Compose 介面
 - `fake-player/`：僅供測試的假播放器
 - `docs/spectra/`：規格與變更紀錄（Spectra SDD）
+
+## 免責聲明
+
+Media Auto-Skipper 是獨立專案，與 Google、YouTube、YouTube Music、Spotify 沒有任何關聯，也未獲得它們的背書或贊助。所有產品名稱與商標屬於各自的擁有者，這裡提到只是為了說明本 App 相容哪些播放器。
 
 ## 授權
 

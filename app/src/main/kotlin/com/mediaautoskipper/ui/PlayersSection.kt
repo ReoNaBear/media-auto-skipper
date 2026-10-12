@@ -23,6 +23,7 @@ data class PlayerInfo(val pkg: String, val label: String)
 
 object PlayerTags {
     const val SIMPLIFIED_SWITCH = "simplified_switch"
+    const val SIMPLIFIED_DISLIKE = "simplified_dislike"
 }
 
 /** Resolves display names and lists installed apps that look like media players. */
@@ -65,6 +66,9 @@ fun RuleTogglesAndPlayers(
     onRemove: (String) -> Unit,
     onAdd: (String) -> Unit,
     modifier: Modifier = Modifier,
+    simplifiedDislike: Boolean = false,
+    /** Called with the new state of the Simplified Chinese "also mark as dislike" option; when null, it is not shown. */
+    onSimplifiedDislikeChange: ((Boolean) -> Unit)? = null,
 ) {
     Column(modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -74,6 +78,15 @@ fun RuleTogglesAndPlayers(
                 modifier = Modifier.testTag(PlayerTags.SIMPLIFIED_SWITCH),
             )
             Text(stringResource(R.string.rule_simplified))
+        }
+        if (onSimplifiedDislikeChange != null) {
+            DislikeOption(
+                checked = simplifiedDislike,
+                onCheckedChange = onSimplifiedDislikeChange,
+                enabled = simplifiedEnabled,
+                modifier = Modifier.testTag(PlayerTags.SIMPLIFIED_DISLIKE),
+            )
+            Text(stringResource(R.string.dislike_note), style = MaterialTheme.typography.bodySmall)
         }
 
         Text(stringResource(R.string.players_title), style = MaterialTheme.typography.titleMedium)

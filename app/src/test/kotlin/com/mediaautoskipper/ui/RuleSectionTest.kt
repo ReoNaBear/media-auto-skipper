@@ -4,6 +4,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.test.assertIsOff
+import androidx.compose.ui.test.assertIsOn
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
@@ -63,5 +65,42 @@ class RuleSectionTest {
         show(RuleKind.KEYWORD)
         rule.onNodeWithText("Delete").performClick()
         assertEquals(emptyList(), current)
+    }
+
+    @Test
+    fun dislikeOptionIsHiddenUnlessWired() {
+        show(RuleKind.KEYWORD)
+        rule.onNodeWithTag(RuleTags.dislike(RuleKind.KEYWORD, "Mix")).assertDoesNotExist()
+    }
+
+    @Test
+    fun dislikeOptionDefaultsOffAndTogglesTheRuleKey() {
+        val changes = mutableListOf<Pair<String, Boolean>>()
+        rule.setContent {
+            RuleSection(
+                RuleKind.KEYWORD,
+                listOf("Mix"),
+                onChange = {},
+                dislikeKeys = emptySet(),
+                onDislikeChange = { key, on -> changes += key to on },
+            )
+        }
+        rule.onNodeWithTag(RuleTags.dislike(RuleKind.KEYWORD, "Mix")).assertIsOff()
+        rule.onNodeWithTag(RuleTags.dislike(RuleKind.KEYWORD, "Mix")).performClick()
+        assertEquals(listOf("keyword:Mix" to true), changes)
+    }
+
+    @Test
+    fun dislikeOptionShowsOnWhenTheKeyIsSet() {
+        rule.setContent {
+            RuleSection(
+                RuleKind.REGEX,
+                listOf("^a"),
+                onChange = {},
+                dislikeKeys = setOf("regex:^a"),
+                onDislikeChange = { _, _ -> },
+            )
+        }
+        rule.onNodeWithTag(RuleTags.dislike(RuleKind.REGEX, "^a")).assertIsOn()
     }
 }

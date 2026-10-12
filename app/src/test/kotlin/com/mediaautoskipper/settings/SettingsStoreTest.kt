@@ -64,4 +64,57 @@ class SettingsStoreTest {
         assertEquals(emptyList(), store.settings.first().keywords)
         scope.cancel()
     }
+
+    @Test
+    fun neverWrittenDislikeRulesMeansEverythingSkipsOnly() = runBlocking {
+        val scope = newScope()
+        val store = open(File(createTempDirectory().toFile(), "d.preferences_pb"), scope)
+        store.setKeywords(listOf("Mix"))
+        assertEquals(emptySet(), store.settings.first().dislikeRules)
+        scope.cancel()
+    }
+
+    @Test
+    fun dislikeFlagsSurviveReopeningTheStore() = runBlocking {
+        val file = File(createTempDirectory().toFile(), "e.preferences_pb")
+        val first = newScope()
+        val store = open(file, first)
+        store.setDislike("keyword:Mix", true)
+        store.setDislike(DislikeRules.SIMPLIFIED, true)
+        store.setDislike("keyword:Mix", false)
+        first.coroutineContext[Job]!!.cancelAndJoin()
+
+        val second = newScope()
+        assertEquals(setOf(DislikeRules.SIMPLIFIED), open(file, second).settings.first().dislikeRules)
+        second.cancel()
+    }
+
+    @Test
+    fun editingAKeywordMovesItsFlagAndDeletingDropsIt() = runBlocking {
+        val scope = newScope()
+        val store = open(File(createTempDirectory().toFile(), "f.preferences_pb"), scope)
+        store.setKeywords(listOf("Mix", "DJ"))
+        store.setDislike("keyword:Mix", true)
+
+        store.setKeywords(listOf("DJ Mix", "DJ"))
+        assertEquals(setOf("keyword:DJ Mix"), store.settings.first().dislikeRules)
+
+        store.setKeywords(listOf("DJ"))
+        assertEquals(emptySet(), store.settings.first().dislikeRules)
+
+        store.setKeywords(listOf("DJ", "DJ Mix"))
+        assertEquals(emptySet(), store.settings.first().dislikeRules)
+        scope.cancel()
+    }
+
+    @Test
+    fun regexFlagsFollowEditsToo() = runBlocking {
+        val scope = newScope()
+        val store = open(File(createTempDirectory().toFile(), "g.preferences_pb"), scope)
+        store.setRegexes(listOf("^a"))
+        store.setDislike("regex:^a", true)
+        store.setRegexes(listOf("^b"))
+        assertEquals(setOf("regex:^b"), store.settings.first().dislikeRules)
+        scope.cancel()
+    }
 }
