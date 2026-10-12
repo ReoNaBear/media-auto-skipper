@@ -25,7 +25,7 @@ When a track matches a rule that the user marked "dislike and skip", the service
 
 ### Requirement: Wait for the player and avoid a double skip
 
-For a marked rule, the service SHALL wait a settle delay after the track's first metadata before sending the dislike, and SHALL skip to the next track only if the player has not already moved to a different track within a short check delay after the dislike was sent. A pending action SHALL be dropped when the track changes before it runs. Rules that are not marked SHALL NOT be delayed.
+For a marked rule, the service SHALL wait a settle delay after the track's first metadata before sending the dislike, and SHALL skip to the next track only if the player has not already moved to a different track within a short check delay after the dislike was sent. A pending action SHALL be dropped when the track changes before it runs. Rules that are not marked, and marked rules on a player that publishes no dislike action, SHALL NOT be delayed.
 
 #### Scenario: Settle delay
 
@@ -41,6 +41,11 @@ For a marked rule, the service SHALL wait a settle delay after the track's first
 
 - **WHEN** the player still shows the same track when the check delay ends
 - **THEN** the service skips to the next track
+
+#### Scenario: Player without a dislike action
+
+- **WHEN** a marked rule matches on a player that publishes no dislike action
+- **THEN** the service skips at once, without the settle delay
 
 #### Scenario: Track changes during the delay
 

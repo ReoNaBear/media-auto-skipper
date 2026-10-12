@@ -31,6 +31,12 @@ class DislikeSupportTest {
     }
 
     @Test
+    fun onlyTheNameMatchesWhenTheIdHasNoKeyword() {
+        val actions = listOf(CustomActionInfo("action_6", "Like"), CustomActionInfo("action_7", "Dislike"))
+        assertEquals("action_7", DislikeSupport.findActionId(actions))
+    }
+
+    @Test
     fun idMatchWinsOverAnEarlierNameMatch() {
         val actions = listOf(CustomActionInfo("a1", "Dislike"), CustomActionInfo("thumbs_down", "x"))
         assertEquals("thumbs_down", DislikeSupport.findActionId(actions))
