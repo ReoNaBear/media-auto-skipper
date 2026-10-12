@@ -1,0 +1,48 @@
+<resources>
+    <string name="status_access_missing_title">需要通知访问权限</string>
+    <string name="status_access_missing_body">Media Auto-Skipper 会读取其他应用正在播放的曲目,以便跳过你不想听的歌。它不会播放或录制任何声音。请前往系统设置授予通知访问权限。</string>
+    <string name="action_open_settings">打开通知访问权限设置</string>
+    <string name="status_access_granted">已授予通知访问权限,服务已就绪。</string>
+
+    <string name="switch_label">跳过符合规则的曲目</string>
+    <string name="switch_needs_access">请先授予通知访问权限才能开启。</string>
+    <string name="switch_on_reminder">离开此应用、关闭屏幕或在车上时仍会持续跳歌,直到你关闭开关或手机重启。</string>
+
+    <string name="notif_channel_paused">已暂停跳歌</string>
+    <string name="notif_paused_title">已暂停跳歌</string>
+    <string name="notif_paused_text">%1$s 连续跳过太多首。遇到不符合规则的曲目后会自动恢复。</string>
+
+    <string name="rules_keywords_title">关键字</string>
+    <string name="rules_regex_title">正则表达式</string>
+    <string name="rules_keyword_hint">添加关键字(任何语言)</string>
+    <string name="rules_regex_hint">添加正则表达式</string>
+    <string name="action_add">添加</string>
+    <string name="action_save">保存</string>
+    <string name="action_edit">编辑</string>
+    <string name="action_delete">删除</string>
+    <string name="error_blank">请先输入内容。</string>
+    <string name="error_duplicate">此项目已存在。</string>
+    <string name="error_invalid_regex">无效的正则表达式:%1$s</string>
+
+    <string name="rule_simplified">跳过含简体中文的标题</string>
+    <string name="players_title">受监听的播放器</string>
+    <string name="players_add_title">从已安装的媒体应用添加</string>
+    <string name="action_remove">移除</string>
+
+    <string name="history_clear">清除记录</string>
+    <string name="history_empty">暂无跳过的曲目。</string>
+    <string name="history_clear_title">清除记录?</string>
+    <string name="history_clear_body">此设备上所有跳过记录都会被删除。</string>
+    <string name="history_clear_confirm">清除</string>
+    <string name="action_cancel">取消</string>
+
+    <string name="tab_home">首页</string>
+    <string name="tab_rules">规则</string>
+    <string name="tab_history">记录</string>
+
+    <string name="settings_language">语言</string>
+    <string name="language_follow_system">跟随系统</string>
+
+    <string name="battery_hint">如果过一会儿就不再跳歌,请将本应用排除在电池优化之外。</string>
+    <string name="action_open_battery_settings">打开电池设置</string>
+</resources>

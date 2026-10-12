@@ -1,0 +1,8 @@
+.spectra/
+docs/spectra/.vector-search.db*
+.gradle/
+build/
+*.iml
+.idea/
+local.properties
+.kotlin/
