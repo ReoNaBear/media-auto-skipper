@@ -1,8 +1,39 @@
-# Media Auto-Skipper
+<a id="top"></a>
+<p align="center">
+  <img src="docs/screenshots/icon.png" width="120" alt="Media Auto-Skipper icon">
+</p>
+
+<h1 align="center">Media Auto-Skipper</h1>
+
+<p align="center">
+  <a href="https://github.com/ReoNaBear/media-auto-skipper/releases/latest"><img alt="release" src="https://img.shields.io/github/v/release/ReoNaBear/media-auto-skipper?include_prereleases"></a>
+  <img alt="platform" src="https://img.shields.io/badge/platform-Android%208.0%2B-3DDC84">
+  <a href="LICENSE"><img alt="license" src="https://img.shields.io/badge/license-MIT-blue"></a>
+</p>
+
+<p align="center"><b>English</b> · <a href="#zh-tw">繁體中文</a></p>
 
 An open-source Android app that **skips tracks you do not want to hear**. It never plays music itself. It watches the media sessions of your players (YouTube Music, YouTube, Spotify, ...) and presses "next" when the title or artist matches your rules, such as Simplified Chinese titles, "Full Album" compilations, or your own keywords and regular expressions.
 
-> Status: all code is written and unit-tested. Testing against the real YouTube, YouTube Music and Spotify apps (screen off, Android Auto, reboot behaviour, skip latency) is **not done yet**. See [Verification status](#verification-status).
+> Status: version 0.1.0, the first release. Verified on an emulator with real YouTube Music; real-car Android Auto, real Spotify and a physical phone are **not verified yet**. See [Verification status](#verification-status).
+
+<p align="center">
+  <img src="docs/screenshots/home.png" width="240" alt="Home">
+  <img src="docs/screenshots/rules.png" width="240" alt="Rules">
+  <img src="docs/screenshots/history.png" width="240" alt="History">
+</p>
+
+## Download
+
+**Version 0.1.0 (first release, pre-release)**
+
+1. Open the [Releases page](https://github.com/ReoNaBear/media-auto-skipper/releases/latest) and download `media-auto-skipper-v0.1.0.apk`.
+2. On your Android phone, open the file and allow "Install unknown apps" for your browser or file manager when asked.
+3. Follow [Use](#use) below.
+
+Requires Android 8.0 (API 26) or newer. This is a debug-signed build for early testers; it is not on Google Play. See the [changelog](CHANGELOG.md) and [what is still unverified](#verification-status).
+
+Want to build it yourself or contribute? See [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## How it works
 
@@ -86,11 +117,36 @@ Android Auto in a real car, real Spotify, skipping on real YouTube (it does not 
 
 ---
 
-# Media Auto-Skipper(繁體中文)
+<a id="zh-tw"></a>
+<p align="center">
+  <img src="docs/screenshots/icon.png" width="120" alt="Media Auto-Skipper 圖示">
+</p>
+
+<h1 align="center">Media Auto-Skipper(繁體中文)</h1>
+
+<p align="center"><a href="#top">English</a> · <b>繁體中文</b></p>
 
 這是一個開源的 Android App,**自動跳過你不想聽的曲目**。它自己不播放音樂,只監聽播放器(YouTube Music、YouTube、Spotify 等)的媒體工作階段,當標題或藝人符合你的規則(例如簡體中文標題、「Full Album」合輯,或你自訂的關鍵字與正規表達式)時,替你按下「下一首」。
 
-> 目前狀態:程式碼都已完成並通過單元測試。**尚未**用真正的 YouTube、YouTube Music、Spotify 測試螢幕關閉、Android Auto、重開機行為與跳歌延遲。詳見[驗證狀態](#驗證狀態)。
+> 目前狀態:版本 0.1.0,第一版。已在模擬器用真實 YouTube Music 驗證;實車 Android Auto、真實 Spotify 與實體手機**尚未驗證**。詳見[驗證狀態](#驗證狀態)。
+
+<p align="center">
+  <img src="docs/screenshots/home.png" width="240" alt="首頁">
+  <img src="docs/screenshots/rules.png" width="240" alt="規則">
+  <img src="docs/screenshots/history.png" width="240" alt="紀錄">
+</p>
+
+## 下載
+
+**版本 0.1.0(第一版,預覽版)**
+
+1. 開啟[發行版頁面](https://github.com/ReoNaBear/media-auto-skipper/releases/latest),下載 `media-auto-skipper-v0.1.0.apk`。
+2. 在 Android 手機上開啟該檔案,系統詢問時,允許瀏覽器或檔案管理員「安裝未知應用程式」。
+3. 接著照下方[使用方式](#使用方式)操作。
+
+需要 Android 8.0(API 26)以上。這是給早期測試者的除錯簽章版本,尚未上架 Google Play。請參考[更新紀錄](CHANGELOG.md)與[尚未驗證的項目](#驗證狀態)。
+
+想自己建置或參與開發?請看 [CONTRIBUTING.md](CONTRIBUTING.md)。
 
 ## 運作方式
 
