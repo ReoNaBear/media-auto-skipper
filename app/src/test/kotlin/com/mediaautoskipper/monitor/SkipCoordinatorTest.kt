@@ -371,6 +371,15 @@ class SkipCoordinatorTest {
     }
 
     @Test
+    fun markedRuleOnAPlayerWithoutADislikeActionSkipsAtOnce() {
+        val t = FakeTarget(dislikeId = null)
+        delayedFeed(t, "Summer Mix 2024")
+        assertEquals(listOf("skip"), t.calls)
+        assertTrue(delayed.isEmpty())
+        assertFalse(events.single().disliked)
+    }
+
+    @Test
     fun skipOnlyRulesAreNotDelayed() {
         val t = FakeTarget(dislikeId = dislikeId)
         delayedFeed(t, "合輯 Vol.1")

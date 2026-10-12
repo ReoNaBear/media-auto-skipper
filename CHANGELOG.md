@@ -1,5 +1,10 @@
 # Changelog / 更新紀錄
 
+## 0.2.1 (2026-10-12)
+
+- Fix: a rule marked "also mark as dislike" on a player that has no dislike action (the YouTube video app) now skips at once instead of waiting about 2 seconds first. The first second or so of a video can still play, because the YouTube app publishes a video's title only after it has started loading; the app cannot read the next video in advance. / 修正：在沒有公開不喜歡動作的播放器（YouTube 影片版）上，勾選了「同時標為不喜歡」的規則現在會立刻跳過，不再先等約 2 秒。影片開頭仍可能播放約一秒，因為 YouTube 要在影片開始載入後才公布標題，本 App 無法提前讀到下一支影片。
+- Tested on a physical phone: dislike on YouTube Music works; YouTube video has no dislike action. / 實體手機實測：YouTube Music 的不喜歡正常；YouTube 影片版沒有不喜歡動作。
+
 ## 0.2.0 (2026-10-12)
 
 - New per-rule option "also mark as dislike" for every keyword, regular expression and the Simplified Chinese rule. A marked match sends the player's dislike action, then skips. Works on YouTube Music; the YouTube video app publishes no such action, so it only skips there. The dislike is written to your account and the app cannot undo it. / 每條規則新增「同時標為不喜歡」選項（關鍵字、正規表達式、簡體中文規則皆可）。命中時先對播放器送出不喜歡，再跳過。YouTube Music 可用；YouTube 影片版沒有公開對應動作，只會跳過。不喜歡會寫進你的帳號，本 App 無法取消。

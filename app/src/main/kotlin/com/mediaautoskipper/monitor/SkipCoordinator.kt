@@ -115,7 +115,8 @@ class SkipCoordinator(
         }
 
         val wantsDislike = match.reason?.let(DislikeRules::keyForReason)?.let { it in settings.dislikeRules } == true
-        if (wantsDislike && t.isNotEmpty()) {
+        // A player that publishes no dislike action (the YouTube video app) gets a plain, immediate skip.
+        if (wantsDislike && t.isNotEmpty() && target.dislikeActionId() != null) {
             // Players ignore a rating sent while the track is still being set up, so wait a moment first.
             if (state.pendingTitle == t) return
             state.pendingTitle = t
