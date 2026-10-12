@@ -9,4 +9,6 @@
 - UI in English, 한국어, 日本語, 简体中文, 繁體中文 with an in-app language switch. / 介面支援五種語言,可在 App 內切換。
 - Battery-optimization hint on the home screen. / 主畫面提供電池最佳化提示。
 
-Known limits / 已知限制: real-car Android Auto, real Spotify and a physical phone are not verified; YouTube may not accept "next" for single videos; ko/ja translations need native review; the Simplified-character table is hand-written. / 尚未驗證實車 Android Auto、真實 Spotify 與實體手機;YouTube 單支影片可能不接受「下一首」;韓日文翻譯待母語者校對;簡體字表為手寫。
+Tested / 已測試: emulator (API 37) and a Sharp R11 phone with YouTube and YouTube Music. / 模擬器（API 37）與 Sharp R11 手機的 YouTube、YouTube Music。
+
+Known limits / 已知限制: real-car Android Auto and real Spotify are not verified; YouTube may not accept "next" for single videos (not confirmed on the phone either way); ko/ja translations need native review; the Simplified-character table is hand-written. / 尚未驗證實車 Android Auto、真實 Spotify 與實體手機;YouTube 單支影片可能不接受「下一首」;韓日文翻譯待母語者校對;簡體字表為手寫。

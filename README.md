@@ -15,7 +15,7 @@
 
 An open-source Android app that **skips tracks you do not want to hear**. It never plays music itself. It watches the media sessions of your players (YouTube Music, YouTube, Spotify, ...) and presses "next" when the title or artist matches your rules, such as Simplified Chinese titles, "Full Album" compilations, or your own keywords and regular expressions.
 
-> Status: version 0.1.0, the first release. Verified on an emulator with real YouTube Music; real-car Android Auto, real Spotify and a physical phone are **not verified yet**. See [Verification status](#verification-status).
+> Status: version 0.1.0, the first release. Verified on an emulator and on a Sharp R11 phone (YouTube and YouTube Music); real-car Android Auto and real Spotify are **not verified yet**. See [Verification status](#verification-status).
 
 <p align="center">
   <img src="docs/screenshots/home.png" width="240" alt="Home">
@@ -98,7 +98,8 @@ Create `local.properties` with `sdk.dir=<path to your Android SDK>` (use forward
 | Real YouTube Music: metadata read and a real skip via a keyword (service-side 4 ms) | Checked by hand on an emulator |
 | Switch resets to off after reboot | Checked on an emulator (not on a physical phone) |
 | Skipping with the screen off, on real YouTube Music (emulator) | Checked by hand; next track was playing about 0.1 s after the skip |
-| Android Auto (Desktop Head Unit), real Spotify, skipping on real YouTube, a physical phone | **Not yet verified** |
+| Physical phone (Sharp R11): YouTube and YouTube Music | Reported working by the author; screen-off and reboot were not separately recorded on it |
+| Android Auto (real car or Desktop Head Unit), real Spotify | **Not yet verified** |
 | Readable queue (for pre-skipping): YouTube Music yes (25 items); YouTube no | Checked, see `docs/queue-probe-notes.md`; Spotify unknown |
 
 ## Project layout
@@ -125,7 +126,7 @@ Create `local.properties` with `sdk.dir=<path to your Android SDK>` (use forward
 
 這是一個開源的 Android App，**自動跳過你不想聽的曲目**。它自己不播放音樂，只監聽播放器（YouTube Music、YouTube、Spotify 等）的媒體工作階段，當標題或藝人符合你的規則（例如簡體中文標題、「Full Album」合輯，或你自訂的關鍵字與正規表達式）時，替你按下「下一首」。
 
-> 目前狀態：版本 0.1.0，第一版。已在模擬器用真實 YouTube Music 驗證；實車 Android Auto、真實 Spotify 與實體手機**尚未驗證**。詳見[驗證狀態](#驗證狀態)。
+> 目前狀態：版本 0.1.0，第一版。已在模擬器與 Sharp R11 手機上驗證（YouTube 與 YouTube Music）；實車 Android Auto 與真實 Spotify **尚未驗證**。詳見[驗證狀態](#驗證狀態)。
 
 <p align="center">
   <img src="docs/screenshots/home.png" width="240" alt="首頁">
@@ -208,7 +209,8 @@ Create `local.properties` with `sdk.dir=<path to your Android SDK>` (use forward
 | 真實 YouTube Music：讀到 metadata，並以關鍵字實際跳歌（App 從收到曲目資訊到送出跳歌指令只花 4 毫秒，不含播放器本身的延遲） | 已在模擬器手動確認 |
 | 重新開機後開關回到關閉 | 已在模擬器確認（尚未在實體手機確認） |
 | 螢幕關閉時在真實 YouTube Music 跳歌（模擬器） | 已手動確認；跳歌後約 0.1 秒，下一首的資訊就送出來了 |
-| Android Auto（Desktop Head Unit）、真實 Spotify、真實 YouTube 跳歌、實體手機 | **尚未驗證** |
+| 實體手機（Sharp R11）：YouTube 與 YouTube Music | 作者回報運作正常；螢幕關閉與重開機尚未在這支手機上另外記錄 |
+| Android Auto（實車或 Desktop Head Unit）、真實 Spotify | **尚未驗證** |
 | 可讀的播放佇列（供提前跳過用）：YouTube Music 可（25 首）；YouTube 不可 | 已確認，見 `docs/queue-probe-notes.md`；Spotify 未知 |
 
 ## 專案結構
