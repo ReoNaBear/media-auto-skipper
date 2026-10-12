@@ -3,10 +3,13 @@ package com.mediaautoskipper.ui
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.selection.toggleable
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -20,7 +23,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.semantics.Role
 import com.mediaautoskipper.R
 import com.mediaautoskipper.settings.DislikeRules
 import com.mediaautoskipper.settings.EditResult
@@ -33,7 +36,7 @@ object RuleTags {
     fun dislike(kind: RuleKind, item: String) = "rule_dislike_${kind}_$item"
 }
 
-/** One editable list of rules (keywords or regular expressions). */
+/** One editable list of rules (keywords or regular expressions), shown as a titled card. */
 @Composable
 fun RuleSection(
     kind: RuleKind,
@@ -52,32 +55,36 @@ fun RuleSection(
     val title = if (kind == RuleKind.KEYWORD) R.string.rules_keywords_title else R.string.rules_regex_title
     val hint = if (kind == RuleKind.KEYWORD) R.string.rules_keyword_hint else R.string.rules_regex_hint
 
-    Column(modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Text(stringResource(title), style = MaterialTheme.typography.titleMedium)
-
+    SectionCard(stringResource(title), modifier) {
         items.forEachIndexed { index, item ->
-            Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-                Text(item, Modifier.weight(1f))
-                TextButton(onClick = {
-                    editing = index
-                    input = item
-                    error = null
-                }) { Text(stringResource(R.string.action_edit)) }
-                TextButton(onClick = {
-                    onChange(RuleEdits.remove(items, index))
-                    if (editing == index) {
-                        editing = null
-                        input = ""
-                    }
-                }) { Text(stringResource(R.string.action_delete)) }
-            }
-            if (onDislikeChange != null) {
-                val key = DislikeRules.key(kind, item)
-                DislikeOption(
-                    checked = key in dislikeKeys,
-                    onCheckedChange = { onDislikeChange(key, it) },
-                    modifier = Modifier.testTag(RuleTags.dislike(kind, item)),
-                )
+            if (index > 0) HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+            Column {
+                Row(
+                    Modifier.fillMaxWidth().defaultMinSize(minHeight = Dimens.touchTarget),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Text(item, Modifier.weight(1f), style = MaterialTheme.typography.bodyLarge)
+                    TextButton(onClick = {
+                        editing = index
+                        input = item
+                        error = null
+                    }) { Text(stringResource(R.string.action_edit)) }
+                    TextButton(onClick = {
+                        onChange(RuleEdits.remove(items, index))
+                        if (editing == index) {
+                            editing = null
+                            input = ""
+                        }
+                    }) { Text(stringResource(R.string.action_delete)) }
+                }
+                if (onDislikeChange != null) {
+                    val key = DislikeRules.key(kind, item)
+                    DislikeOption(
+                        checked = key in dislikeKeys,
+                        onCheckedChange = { onDislikeChange(key, it) },
+                        modifier = Modifier.testTag(RuleTags.dislike(kind, item)),
+                    )
+                }
             }
         }
 
@@ -92,7 +99,7 @@ fun RuleSection(
             isError = error != null,
             modifier = Modifier.fillMaxWidth().testTag(RuleTags.input(kind)),
         )
-        error?.let { Text(errorText(it), color = MaterialTheme.colorScheme.error) }
+        error?.let { Text(errorText(it), color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall) }
 
         Button(
             onClick = {
@@ -107,12 +114,16 @@ fun RuleSection(
                     error = result
                 }
             },
-            modifier = Modifier.padding(bottom = 8.dp).testTag(RuleTags.add(kind)),
+            modifier = Modifier.defaultMinSize(minHeight = Dimens.touchTarget).testTag(RuleTags.add(kind)),
         ) { Text(stringResource(if (editing == null) R.string.action_add else R.string.action_save)) }
     }
 }
 
-/** The "also mark as dislike" checkbox with its label. */
+/**
+ * The "also mark as dislike" checkbox with its label; the whole row toggles it (48 dp high). A marked rule
+ * sends the player's dislike before it skips, which writes to the user's account and makes skipping slower
+ * and less predictable (it waits, and some players move on by themselves or ignore the skip).
+ */
 @Composable
 fun DislikeOption(
     checked: Boolean,
@@ -120,9 +131,37 @@ fun DislikeOption(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
 ) {
-    Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-        Checkbox(checked = checked, onCheckedChange = onCheckedChange, enabled = enabled, modifier = modifier)
-        Text(stringResource(R.string.dislike_option), style = MaterialTheme.typography.bodySmall)
+    Row(
+        modifier
+            .fillMaxWidth()
+            .defaultMinSize(minHeight = Dimens.touchTarget)
+            .toggleable(value = checked, enabled = enabled, role = Role.Checkbox, onValueChange = onCheckedChange)
+            .padding(start = Dimens.xs),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Checkbox(checked = checked, onCheckedChange = null, enabled = enabled)
+        Text(
+            stringResource(R.string.dislike_option),
+            style = MaterialTheme.typography.bodyMedium,
+            color = if (enabled) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.padding(start = Dimens.sm),
+        )
+    }
+}
+
+/** The warning card shown above every dislike option: account effect, no undo, slower and less reliable skipping. */
+@Composable
+fun DislikeWarningCard(modifier: Modifier = Modifier) {
+    SectionCard(
+        title = stringResource(R.string.dislike_warning_title),
+        modifier = modifier,
+        containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+    ) {
+        Text(
+            stringResource(R.string.dislike_note),
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onTertiaryContainer,
+        )
     }
 }
 

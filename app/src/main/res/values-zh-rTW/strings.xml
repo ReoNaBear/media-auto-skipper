@@ -47,6 +47,12 @@
     <string name="action_open_battery_settings">開啟電池設定</string>
 
     <string name="dislike_option">同時標為不喜歡</string>
-    <string name="dislike_note">命中時會同時對播放器送出「不喜歡」。這會同步到你的帳號並影響推薦，本 App 無法取消。</string>
+    <string name="dislike_note">勾選的規則命中時，會先對播放器送出「不喜歡」再跳過。這會寫進你的帳號並影響推薦，本 App 無法取消。它也會讓跳歌變慢、變得比較不可靠：App 要先等約 1.5 到 2 秒，有些播放器會自己換歌，或忽略跳過指令。</string>
     <string name="history_disliked">已不喜歡</string>
+    <string name="home_tagline">自動跳過你不想聽的曲目</string>
+    <string name="status_on">跳歌已開啟</string>
+    <string name="status_off">跳歌已關閉</string>
+    <string name="rules_section_detection">偵測</string>
+    <string name="dislike_warning_title">關於「不喜歡」選項</string>
+    <string name="history_empty_hint">跳過的曲目會顯示在這裡。</string>
 </resources>

@@ -45,7 +45,14 @@ data class SkipEvent(
 )
 
 /**
- * Decides, per metadata change, whether to skip. Holds the debounce and loop-protection state per
+ * Decides, per metadata change, whether to skip.
+ *
+ * Note on "also mark as dislike": a rule with that option makes skipping slower and less predictable.
+ * The app waits before acting ([DISLIKE_SETTLE_MS] or [RATING_SETTLE_MS]) because players ignore a dislike
+ * or a skip sent while a track is still loading, some players move on by themselves after a dislike, and
+ * the skip is retried if the player ignored it. Plain rules are not affected and skip within milliseconds.
+ *
+ * Holds the debounce and loop-protection state per
  * player package. Not thread-safe: call it from a single thread (the service main thread).
  */
 class SkipCoordinator(

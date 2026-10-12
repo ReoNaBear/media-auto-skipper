@@ -47,6 +47,12 @@
     <string name="action_open_battery_settings">バッテリー設定を開く</string>
 
     <string name="dislike_option">低評価も付ける</string>
-    <string name="dislike_note">一致すると、プレーヤーに「低評価」も送ります。アカウントに同期されておすすめに影響し、このアプリでは取り消せません。</string>
+    <string name="dislike_note">印を付けたルールに一致すると、スキップする前にプレーヤーへ「低評価」を送ります。これはアカウントに記録されておすすめに影響し、このアプリでは取り消せません。また、スキップが遅くなり、確実性も下がります。アプリが先に約1.5〜2秒待つほか、プレーヤーによっては自分で次の曲に進んだり、スキップを無視したりします。</string>
     <string name="history_disliked">低評価済み</string>
+    <string name="home_tagline">聴きたくない曲をスキップします</string>
+    <string name="status_on">スキップはオンです</string>
+    <string name="status_off">スキップはオフです</string>
+    <string name="rules_section_detection">検出</string>
+    <string name="dislike_warning_title">低評価オプションについて</string>
+    <string name="history_empty_hint">スキップした曲がここに表示されます。</string>
 </resources>

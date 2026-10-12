@@ -15,7 +15,7 @@
 
 An open-source Android app that **skips tracks you do not want to hear**. It never plays music itself. It watches the media sessions of your players (YouTube Music, YouTube, Spotify, ...) and presses "next" when the title or artist matches your rules, such as Simplified Chinese titles, "Full Album" compilations, or your own keywords and regular expressions.
 
-> Status: version 0.3.0 (pre-release). Verified on an emulator and on a Sharp R11 phone with Android 16 (YouTube and YouTube Music); real-car Android Auto and real Spotify are **not verified yet**. See [Verification status](#verification-status).
+> Status: version 0.2.0 (first public release). Verified on an emulator and on a Sharp R11 phone with Android 16 (YouTube and YouTube Music); real-car Android Auto and real Spotify are **not verified yet**. See [Verification status](#verification-status).
 
 > **Works offline by design.** The app declares no internet permission, so it cannot send anything off your phone. Settings and skip history stay on the device. You can check this in `app/src/main/AndroidManifest.xml`.
 
@@ -27,9 +27,9 @@ An open-source Android app that **skips tracks you do not want to hear**. It nev
 
 ## Download
 
-**Version 0.3.0 (pre-release)**
+**Version 0.2.0 (first public release)**
 
-1. Open the [Releases page](https://github.com/ReoNaBear/media-auto-skipper/releases/latest) and download `media-auto-skipper-v0.3.0.apk`.
+1. Open the [Releases page](https://github.com/ReoNaBear/media-auto-skipper/releases/latest) and download `media-auto-skipper-v0.2.0.apk`.
 2. On your Android phone, open the file and allow "Install unknown apps" for your browser or file manager when asked.
 3. Follow [Use](#use) below.
 
@@ -50,7 +50,7 @@ Want to build it yourself or contribute? See [CONTRIBUTING.md](CONTRIBUTING.md).
 - **Keywords**: matched literally, case-insensitively, after Unicode NFKC normalization. ASCII keywords match whole words ("Mix" matches "Summer Mix" but not "Remix"); other scripts match as substrings. There is no Simplified/Traditional conversion, so a keyword in one language never fires on another.
 - **Regular expressions**: case-insensitive, validated when saved, with a 50 ms time budget per match so a bad pattern cannot stall the service.
 - Defaults: 合輯, 合辑, 精選, 精选, Full Album, Mix. You can remove any of them.
-- **Also mark as dislike** (optional, off by default, per rule): every keyword, every regular expression and the Simplified Chinese rule has a checkbox. When a marked rule matches, the app sends the player's own "Dislike" action and then skips. It works with YouTube Music (the player's own "Dislike" action) and with the YouTube video app (the official thumbs-down rating call); a player that offers neither only skips. A dislike is written to your account and changes your recommendations; the app cannot undo it. A marked match waits before acting, so it is slower than a plain skip: about 2 seconds on YouTube Music (to avoid undoing an existing dislike) and about 1.5 seconds on the YouTube video app (a rating sent at once was not applied and the skip was ignored while the video was still loading). These times were measured on an emulator, one session each, and whether YouTube treats the rating like a tap on the thumb for recommendations cannot be checked. See `docs/queue-probe-notes.md`.
+- **Also mark as dislike** (optional, off by default, per rule). **Caution: this makes skipping slower and less reliable.** every keyword, every regular expression and the Simplified Chinese rule has a checkbox. When a marked rule matches, the app sends the player's own "Dislike" action and then skips. It works with YouTube Music (the player's own "Dislike" action) and with the YouTube video app (the official thumbs-down rating call); a player that offers neither only skips. A dislike is written to your account and changes your recommendations; the app cannot undo it. A marked match waits before acting, so it is slower than a plain skip: about 2 seconds on YouTube Music (to avoid undoing an existing dislike) and about 1.5 seconds on the YouTube video app (a rating sent at once was not applied and the skip was ignored while the video was still loading). These times were measured on an emulator, one session each, and whether YouTube treats the rating like a tap on the thumb for recommendations cannot be checked. See `docs/queue-probe-notes.md`.
 
 ### Safety
 
@@ -133,7 +133,7 @@ Media Auto-Skipper is an independent project. It is not affiliated with, endorse
 
 這是一個開源的 Android App，**自動跳過你不想聽的曲目**。它自己不播放音樂，只監聽播放器（YouTube Music、YouTube、Spotify 等）的媒體工作階段，當標題或藝人符合你的規則（例如簡體中文標題、「Full Album」合輯，或你自訂的關鍵字與正規表達式）時，替你按下「下一首」。
 
-> 目前狀態：版本 0.3.0（預覽版）。已在模擬器與 Android 16 的 Sharp R11 手機上驗證（YouTube 與 YouTube Music）；實車 Android Auto 與真實 Spotify **尚未驗證**。詳見[驗證狀態](#驗證狀態)。
+> 目前狀態：版本 0.2.0（首次公開版本）。已在模擬器與 Android 16 的 Sharp R11 手機上驗證（YouTube 與 YouTube Music）；實車 Android Auto 與真實 Spotify **尚未驗證**。詳見[驗證狀態](#驗證狀態)。
 
 > **設計上完全離線。** App 沒有宣告網路權限，不可能把任何資料傳出手機；設定與跳過紀錄都只存在手機裡。你可以在 `app/src/main/AndroidManifest.xml` 自行檢查。
 
@@ -145,9 +145,9 @@ Media Auto-Skipper is an independent project. It is not affiliated with, endorse
 
 ## 下載
 
-**版本 0.3.0（預覽版）**
+**版本 0.2.0（首次公開版本）**
 
-1. 開啟 [Releases 頁面](https://github.com/ReoNaBear/media-auto-skipper/releases/latest)，下載 `media-auto-skipper-v0.3.0.apk`。
+1. 開啟 [Releases 頁面](https://github.com/ReoNaBear/media-auto-skipper/releases/latest)，下載 `media-auto-skipper-v0.2.0.apk`。
 2. 在手機上點開這個檔案。系統詢問時，允許瀏覽器或檔案管理員「安裝不明應用程式」。
 3. 接著照下方[使用方式](#使用方式)操作。
 
@@ -168,7 +168,7 @@ Media Auto-Skipper is an independent project. It is not affiliated with, endorse
 - **關鍵字**：經 Unicode NFKC 正規化後，以字面、不分大小寫比對。ASCII 關鍵字須為完整單字（「Mix」會命中「Summer Mix」，不會命中「Remix」）；其他文字以子字串比對。不做繁簡轉換，所以某語言的關鍵字不會誤中另一種語言。
 - **正規表達式**：不分大小寫，儲存時會驗證，每次比對有 50 毫秒時間上限，避免壞掉的規則拖垮服務。
 - 預設關鍵字：合輯、合辑、精選、精选、Full Album、Mix，都可以移除。
-- **同時標為不喜歡**（選用，預設關閉，每條規則各自設定）：每個關鍵字、每個正規表達式與簡體中文規則都有一個勾選框。勾選的規則命中時，App 會先對播放器送出它自己公開的「不喜歡」動作，再跳過。YouTube Music 用播放器自己的「不喜歡」動作，YouTube 影片版用官方的倒讚評分呼叫；兩者都沒有的播放器就只會跳過。不喜歡會寫進你的帳號並影響推薦，本 App 無法取消。勾選的規則命中後會先等一下才動作，比單純跳過慢：YouTube Music 約 2 秒（避免取消原有的不喜歡），YouTube 影片版約 1.5 秒（立刻送出的評分不會生效，影片還在載入時跳過也會被忽略）。這些時間都只在模擬器上各量一次，YouTube 是否把評分當成按下倒讚來調整推薦也無法驗證。詳見 `docs/queue-probe-notes.md`。
+- **同時標為不喜歡**（選用，預設關閉，每條規則各自設定）。**注意：它會讓跳過變慢、變得較不可靠。**每個關鍵字、每個正規表達式與簡體中文規則都有一個勾選框。勾選的規則命中時，App 會先對播放器送出它自己公開的「不喜歡」動作，再跳過。YouTube Music 用播放器自己的「不喜歡」動作，YouTube 影片版用官方的倒讚評分呼叫；兩者都沒有的播放器就只會跳過。不喜歡會寫進你的帳號並影響推薦，本 App 無法取消。勾選的規則命中後會先等一下才動作，比單純跳過慢：YouTube Music 約 2 秒（避免取消原有的不喜歡），YouTube 影片版約 1.5 秒（立刻送出的評分不會生效，影片還在載入時跳過也會被忽略）。這些時間都只在模擬器上各量一次，YouTube 是否把評分當成按下倒讚來調整推薦也無法驗證。詳見 `docs/queue-probe-notes.md`。
 
 ### 安全機制
 

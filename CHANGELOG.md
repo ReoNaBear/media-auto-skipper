@@ -1,43 +1,29 @@
 # Changelog / 更新紀錄
 
-## 0.3.0 (2026-10-12)
+## 0.2.0 (2026-10-12) — first public release / 首次公開版本
 
-- "Also mark as dislike" now works on the YouTube video app too, through the official thumbs-down rating call, for players that offer thumbs up/down rating but no dislike action. YouTube Music keeps using its own dislike action unchanged. / 「同時標為不喜歡」現在在 YouTube 影片版也有效：沒有不喜歡動作、但支援上下拇指評分的播放器，改用官方的倒讚評分呼叫。YouTube Music 仍用它自己的不喜歡動作，行為不變。
-- On the YouTube video app a marked match waits about 1.5 seconds first: on the emulator a rating sent at once was not applied and the skip was ignored while the video was loading. Measured in one emulator session only. / 在 YouTube 影片版，勾選的規則命中後會先等約 1.5 秒：模擬器上立刻送出的評分不會生效，影片還在載入時跳過也會被忽略。只在一次模擬器測試中量過。
-- If the first skip is ignored, the skip is retried when the same video shows up again, without rating twice. / 第一次跳過被忽略時，同一支影片再次出現會重試跳過，但不會重複評分。
-- Whether YouTube counts the rating like a tap on the thumb for recommendations cannot be verified. / YouTube 是否把這個評分當成按下倒讚來調整推薦，無法驗證。
+Earlier internal build numbers (0.1.x up to 0.3.0) were never published, so they are folded into this release. / 先前的內部版本號（0.1.x 到 0.3.0）都沒有發布過，已整併成這一個版本。
 
-## 0.2.2 (2026-10-12)
+**Skipping / 跳過**
 
-- Fix: turning the master switch off, removing the rule or removing the player during the roughly 2 second wait of a "dislike" rule now cancels the pending dislike and skip. Before, the dislike could still be sent after you turned the app off, and it cannot be undone. / 修正：勾選「不喜歡」的規則在約 2 秒等待期間，若你關閉總開關、刪除規則或移除播放器，現在會取消待送的不喜歡與跳過。之前關閉後仍可能送出，而且無法復原。
-- Fix: no wait when the track is already disliked or the player publishes no rating. / 修正：曲目已是不喜歡、或播放器沒有公開評分時，不再白等。
-- Fix: actions such as `remove_dislike` or `undislike` are never mistaken for the dislike action, and the known `thumbs_down_action` is preferred. / 修正：`remove_dislike`、`undislike` 這類動作不會被誤認成不喜歡動作，並優先使用已知的 `thumbs_down_action`。
-- Fix: reordering or editing several rules at once no longer loses their dislike options. / 修正：一次調整多條規則的順序或內容，不會再遺失它們的不喜歡選項。
+- Skips tracks whose title or artist contains Simplified-Chinese-only characters, a keyword or a regular expression, on YouTube Music, YouTube and Spotify; other media apps can be added. / 依簡體中文專有字、關鍵字或正規表達式，跳過 YouTube Music、YouTube、Spotify 的曲目，可新增其他媒體 App。
+- The Simplified-character table is generated from Unicode Unihan, GB2312, Big5 and JIS X 0208 (about 2,000 characters), and spares characters that are valid in Traditional Chinese or Japanese. / 簡體字表由 Unicode Unihan、GB2312、Big5、JIS X 0208 自動產生（約 2,000 字），不誤判繁體或日文也有效的字。
+- Master switch (off by default, resets after reboot), debounce, and loop protection (20 skips per 60 seconds). / 總開關（預設關閉、重開機後重置）、防抖動，以及連跳保護（60 秒 20 次）。
+- Works with the screen off; checked on an emulator and on a Sharp R11 phone (Android 16) with YouTube and YouTube Music. / 螢幕關閉時可運作；已在模擬器與 Sharp R11（Android 16）以 YouTube、YouTube Music 驗證。
 
-## 0.2.1 (2026-10-12)
+**"Also mark as dislike" / 同時標為不喜歡**
 
-- Fix: a rule marked "also mark as dislike" on a player that has no dislike action (the YouTube video app) now skips at once instead of waiting about 2 seconds first. The first second or so of a video can still play, because the YouTube app publishes a video's title only after it has started loading; the app cannot read the next video in advance. / 修正：在沒有公開不喜歡動作的播放器（YouTube 影片版）上，勾選了「同時標為不喜歡」的規則現在會立刻跳過，不再先等約 2 秒。影片開頭仍可能播放約一秒，因為 YouTube 要在影片開始載入後才公布標題，本 App 無法提前讀到下一支影片。
-- Tested on a physical phone: dislike on YouTube Music works; YouTube video has no dislike action. / 實體手機實測：YouTube Music 的不喜歡正常；YouTube 影片版沒有不喜歡動作。
+- Optional, off by default, set per rule (every keyword, every regular expression and the Simplified Chinese rule). A marked match sends the player's dislike, then skips. / 選用、預設關閉、每條規則各自設定（每個關鍵字、每個正規表達式與簡體中文規則）。命中時先對播放器送出不喜歡，再跳過。
+- YouTube Music uses its own dislike action; the YouTube video app uses the official thumbs-down rating call; a player with neither only skips. / YouTube Music 用它自己的不喜歡動作；YouTube 影片版用官方的倒讚評分呼叫；兩者都沒有的播放器只會跳過。
+- **It makes skipping slower and less reliable**: a marked match waits about 2 seconds (YouTube Music) or 1.5 seconds (YouTube video app) before acting, some players move on by themselves, and a skip sent while a video is still loading can be ignored (it is retried). Plain rules are not affected. These times were measured on an emulator, one session each. / **它會讓跳過變慢、變得較不可靠**：勾選的規則命中後要先等約 2 秒（YouTube Music）或 1.5 秒（YouTube 影片版）才動作，有些播放器會自己換歌，影片還在載入時送出的跳過可能被忽略（會重試）。沒勾選的規則不受影響。這些時間只在模擬器上各量一次。
+- The dislike is written to your account and changes your recommendations; the app cannot undo it. Whether YouTube counts the rating like a tap on the thumb cannot be verified. / 不喜歡會寫進你的帳號並影響推薦，本 App 無法取消；YouTube 是否把評分當成按下倒讚，無法驗證。
+- The history shows a "Disliked" label on those skips. / 紀錄頁會在這些跳過上顯示「已不喜歡」標籤。
 
-## 0.2.0 (2026-10-12)
+**Interface / 介面**
 
-- New per-rule option "also mark as dislike" for every keyword, regular expression and the Simplified Chinese rule. A marked match sends the player's dislike action, then skips. Works on YouTube Music; the YouTube video app publishes no such action, so it only skips there. The dislike is written to your account and the app cannot undo it. / 每條規則新增「同時標為不喜歡」選項（關鍵字、正規表達式、簡體中文規則皆可）。命中時先對播放器送出不喜歡，再跳過。YouTube Music 可用；YouTube 影片版沒有公開對應動作，只會跳過。不喜歡會寫進你的帳號，本 App 無法取消。
-- Marked matches wait about 2 seconds before acting, so they are slower than a plain skip. Tuned on one emulator session. / 勾選的規則命中後會等約 2 秒才動作，比單純跳過慢；這個時間只在一次模擬器測試中調整過。
-- The Simplified Chinese character table is now generated from Unicode Unihan, GB2312, Big5 and JIS X 0208 (about 2,000 characters, was about 580 by hand). It no longer flags characters that are valid in Traditional Chinese, such as 价, 优 and 叶. / 簡體字表改由 Unicode Unihan、GB2312、Big5、JIS X 0208 自動產生（約 2,000 字，原本手寫約 580 字），不再誤判繁體也有效的字，例如 价、优、叶。
-- Skip history shows a "Disliked" marker; the history database was upgraded (old records are kept). / 紀錄頁顯示「已不喜歡」標記；紀錄資料庫已升級，舊紀錄保留。
-
-## 0.1.1 (2026-10-12)
-
-- Loop protection raised from 10 to 20 skips per 60 seconds: on a phone, 10 matching videos in a row stopped skipping. / 連跳保護從 60 秒 10 次調高到 20 次：實機上連續 10 部符合規則的影片就被停下來。
-- Verified on a Sharp R11 (Android 16) with YouTube and YouTube Music, including skipping with the screen off. / 已在 Sharp R11（Android 16）以 YouTube、YouTube Music 驗證，包含螢幕關閉時跳歌。
-
-## 0.1.0 (2026-10-12) — first release / 第一版
-
-- Skip tracks whose title or artist contains Simplified-Chinese-only characters, a keyword, or a regular expression. / 依簡體中文專有字、關鍵字或正規表達式跳過曲目。
-- Works through media sessions of YouTube Music, YouTube and Spotify; other media apps can be added. / 透過 YouTube Music、YouTube、Spotify 的媒體工作階段運作,可新增其他媒體 App。
-- Master switch (off by default, resets after reboot), debounce and loop protection. / 總開關(預設關閉、重開機後重置)、防抖動與連跳保護。
-- Skip history stored on the device, filterable and clearable. / 跳過紀錄只存在本機,可篩選與清除。
-- UI in English, 한국어, 日本語, 简体中文, 繁體中文 with an in-app language switch. / 介面支援五種語言,可在 App 內切換。
+- New design: teal brand colour with light and dark themes, cards, icons in the bottom bar, 48 dp touch targets, and a clear warning card about the dislike option. Designed with the `penpot-uiux-design` guidelines. / 全新設計：青綠品牌色、淺色與深色主題、卡片、底部導覽圖示、48 dp 點擊範圍，以及不喜歡選項的警示卡。依 `penpot-uiux-design` 準則設計。
+- English, 한국어, 日本語, 简体中文, 繁體中文 with an in-app language switch. / 支援五種語言，可在 App 內切換。
 - Battery-optimization hint on the home screen. / 主畫面提供電池最佳化提示。
+- Skip history stored on the device only, filterable and clearable. / 跳過紀錄只存在本機，可篩選與清除。
 
-Known limits / 已知限制: real-car Android Auto and real Spotify are not verified; YouTube may not accept "next" for single videos (not confirmed on the phone either way); ko/ja translations need native review. / 尚未驗證實車 Android Auto、真實 Spotify 與實體手機;YouTube 單支影片可能不接受「下一首」;韓日文翻譯待母語者校對;簡體字表為手寫。
+**Not verified yet / 尚未驗證**: real-car Android Auto; real Spotify; the reboot reset on a physical phone; ko/ja translations need native review. / 實車 Android Auto、真實 Spotify、實體手機上的重開機重置；韓日文翻譯待母語者校對。

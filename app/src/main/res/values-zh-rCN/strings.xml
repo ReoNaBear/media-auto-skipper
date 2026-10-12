@@ -47,6 +47,12 @@
     <string name="action_open_battery_settings">打开电池设置</string>
 
     <string name="dislike_option">同时标为不喜欢</string>
-    <string name="dislike_note">命中时会同时向播放器发送“不喜欢”。这会同步到你的账号并影响推荐，本应用无法撤销。</string>
+    <string name="dislike_note">勾选的规则命中时，会先向播放器发送“不喜欢”再跳过。这会写入你的账号并影响推荐，本应用无法撤销。它还会让跳歌变慢、变得不那么可靠：应用要先等约 1.5 到 2 秒，有些播放器会自己换歌，或忽略跳过指令。</string>
     <string name="history_disliked">已不喜欢</string>
+    <string name="home_tagline">自动跳过你不想听的曲目</string>
+    <string name="status_on">跳歌已开启</string>
+    <string name="status_off">跳歌已关闭</string>
+    <string name="rules_section_detection">检测</string>
+    <string name="dislike_warning_title">关于“不喜欢”选项</string>
+    <string name="history_empty_hint">跳过的曲目会显示在这里。</string>
 </resources>

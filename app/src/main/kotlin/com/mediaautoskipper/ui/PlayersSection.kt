@@ -6,7 +6,10 @@ import android.content.pm.PackageManager
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.defaultMinSize
+import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
@@ -15,6 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.mediaautoskipper.R
@@ -56,7 +60,10 @@ object PlayerCatalog {
     }
 }
 
-/** The Simplified Chinese toggle and the monitored-players list with an "add installed app" list. */
+/**
+ * The Rules tab's first two cards: Simplified Chinese detection (with the optional dislike option and the
+ * warning that goes with it) and the monitored players with an "add installed app" list.
+ */
 @Composable
 fun RuleTogglesAndPlayers(
     simplifiedEnabled: Boolean,
@@ -70,40 +77,59 @@ fun RuleTogglesAndPlayers(
     /** Called with the new state of the Simplified Chinese "also mark as dislike" option; when null, it is not shown. */
     onSimplifiedDislikeChange: ((Boolean) -> Unit)? = null,
 ) {
-    Column(modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-            Switch(
-                checked = simplifiedEnabled,
-                onCheckedChange = onSimplifiedChange,
-                modifier = Modifier.testTag(PlayerTags.SIMPLIFIED_SWITCH),
-            )
-            Text(stringResource(R.string.rule_simplified))
-        }
-        if (onSimplifiedDislikeChange != null) {
-            DislikeOption(
-                checked = simplifiedDislike,
-                onCheckedChange = onSimplifiedDislikeChange,
-                enabled = simplifiedEnabled,
-                modifier = Modifier.testTag(PlayerTags.SIMPLIFIED_DISLIKE),
-            )
-            Text(stringResource(R.string.dislike_note), style = MaterialTheme.typography.bodySmall)
-        }
+    Column(modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(Dimens.md)) {
+        // Dislike writes to the user's account and makes skipping slower and less reliable (it waits before
+        // acting and some players move on by themselves), so the warning sits above every dislike option.
+        if (onSimplifiedDislikeChange != null) DislikeWarningCard()
 
-        Text(stringResource(R.string.players_title), style = MaterialTheme.typography.titleMedium)
-        monitored.forEach { p ->
-            Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-                Text(p.label, Modifier.weight(1f))
-                TextButton(onClick = { onRemove(p.pkg) }) { Text(stringResource(R.string.action_remove)) }
+        SectionCard(stringResource(R.string.rules_section_detection)) {
+            Row(
+                Modifier
+                    .fillMaxWidth()
+                    .defaultMinSize(minHeight = Dimens.touchTarget)
+                    .toggleable(
+                        value = simplifiedEnabled,
+                        role = Role.Switch,
+                        onValueChange = onSimplifiedChange,
+                    )
+                    .testTag(PlayerTags.SIMPLIFIED_SWITCH),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(Dimens.md),
+            ) {
+                Text(stringResource(R.string.rule_simplified), Modifier.weight(1f), style = MaterialTheme.typography.bodyLarge)
+                Switch(checked = simplifiedEnabled, onCheckedChange = null)
+            }
+            if (onSimplifiedDislikeChange != null) {
+                DislikeOption(
+                    checked = simplifiedDislike,
+                    onCheckedChange = onSimplifiedDislikeChange,
+                    enabled = simplifiedEnabled,
+                    modifier = Modifier.testTag(PlayerTags.SIMPLIFIED_DISLIKE),
+                )
             }
         }
 
-        val addable = candidates.filter { c -> monitored.none { it.pkg == c.pkg } }
-        if (addable.isNotEmpty()) {
-            Text(stringResource(R.string.players_add_title), style = MaterialTheme.typography.titleSmall)
-            addable.forEach { p ->
-                Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-                    Text(p.label, Modifier.weight(1f))
-                    TextButton(onClick = { onAdd(p.pkg) }) { Text(stringResource(R.string.action_add)) }
+        SectionCard(stringResource(R.string.players_title)) {
+            monitored.forEach { p ->
+                Row(Modifier.fillMaxWidth().defaultMinSize(minHeight = Dimens.touchTarget), verticalAlignment = Alignment.CenterVertically) {
+                    Text(p.label, Modifier.weight(1f), style = MaterialTheme.typography.bodyLarge)
+                    TextButton(onClick = { onRemove(p.pkg) }) { Text(stringResource(R.string.action_remove)) }
+                }
+            }
+
+            val addable = candidates.filter { c -> monitored.none { it.pkg == c.pkg } }
+            if (addable.isNotEmpty()) {
+                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
+                Text(
+                    stringResource(R.string.players_add_title),
+                    style = MaterialTheme.typography.titleSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+                addable.forEach { p ->
+                    Row(Modifier.fillMaxWidth().defaultMinSize(minHeight = Dimens.touchTarget), verticalAlignment = Alignment.CenterVertically) {
+                        Text(p.label, Modifier.weight(1f), style = MaterialTheme.typography.bodyLarge)
+                        TextButton(onClick = { onAdd(p.pkg) }) { Text(stringResource(R.string.action_add)) }
+                    }
                 }
             }
         }

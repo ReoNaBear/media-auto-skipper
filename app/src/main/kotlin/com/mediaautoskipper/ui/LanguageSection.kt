@@ -3,7 +3,8 @@ package com.mediaautoskipper.ui
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.selection.selectable
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.defaultMinSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.MaterialTheme
@@ -61,16 +62,19 @@ fun LanguageSection(modifier: Modifier = Modifier) {
 
 @Composable
 fun LanguageOptions(current: LanguageChoice, modifier: Modifier = Modifier, onSelect: (LanguageChoice) -> Unit) {
-    Column(modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-        Text(stringResource(R.string.settings_language), style = MaterialTheme.typography.titleMedium)
+    SectionCard(stringResource(R.string.settings_language), modifier) {
         LanguageChoice.entries.forEach { choice ->
             Row(
-                Modifier.fillMaxWidth().testTag(LanguageTags.option(choice))
+                Modifier.fillMaxWidth().defaultMinSize(minHeight = Dimens.touchTarget).testTag(LanguageTags.option(choice))
                     .selectable(selected = choice == current, role = Role.RadioButton, onClick = { onSelect(choice) }),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 RadioButton(selected = choice == current, onClick = null)
-                Text(choice.nativeName ?: stringResource(R.string.language_follow_system))
+                Text(
+                    choice.nativeName ?: stringResource(R.string.language_follow_system),
+                    Modifier.padding(start = Dimens.sm),
+                    style = MaterialTheme.typography.bodyLarge,
+                )
             }
         }
     }

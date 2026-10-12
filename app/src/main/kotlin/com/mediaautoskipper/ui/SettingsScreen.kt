@@ -12,14 +12,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.unit.dp
 import com.mediaautoskipper.MasApp
 import com.mediaautoskipper.settings.AppSettings
 import com.mediaautoskipper.settings.DislikeRules
 import com.mediaautoskipper.settings.RuleKind
 import kotlinx.coroutines.launch
 
-/** Rules tab: Simplified toggle, monitored players, keywords and regular expressions. */
+/** Rules tab: dislike warning, detection, monitored players, keywords, regular expressions and language, as cards. */
 @Composable
 fun SettingsScreen() {
     val context = LocalContext.current
@@ -30,8 +29,8 @@ fun SettingsScreen() {
     val monitored = settings.monitoredPackages.map { PlayerInfo(it, PlayerCatalog.label(context, it)) }
 
     Column(
-        Modifier.verticalScroll(rememberScrollState()).padding(24.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
+        Modifier.verticalScroll(rememberScrollState()).padding(Dimens.md),
+        verticalArrangement = Arrangement.spacedBy(Dimens.md),
     ) {
         RuleTogglesAndPlayers(
             simplifiedEnabled = settings.simplifiedEnabled,

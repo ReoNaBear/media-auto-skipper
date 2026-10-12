@@ -24,7 +24,11 @@ data class AppSettings(
     val keywords: List<String> = DefaultBlacklist.keywords,
     val regexes: List<String> = emptyList(),
     val monitoredPackages: List<String> = DefaultPlayers.packages,
-    /** Rule keys (see [DislikeRules]) whose matches also send the player's dislike action. Empty by default. */
+    /**
+     * Rule keys (see [DislikeRules]) whose matches also send the player's dislike. Empty by default. A marked
+     * rule writes to the user's account and makes skipping slower and less reliable (the app waits first and
+     * some players move on by themselves or ignore the skip), so it is always opt-in.
+     */
     val dislikeRules: Set<String> = emptySet(),
 ) {
     val filterConfig: FilterConfig get() = FilterConfig(simplifiedEnabled, keywords, regexes)

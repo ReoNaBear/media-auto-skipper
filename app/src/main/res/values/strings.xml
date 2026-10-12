@@ -49,6 +49,12 @@
     <string name="action_open_battery_settings">Open battery settings</string>
 
     <string name="dislike_option">Also mark as dislike</string>
-    <string name="dislike_note">Matching also sends “Dislike” to the player. This syncs to your account, changes your recommendations, and this app cannot undo it.</string>
+    <string name="dislike_note">A marked rule sends “Dislike” to the player before it skips. That is written to your account and changes your recommendations, and this app cannot undo it. It also makes skipping slower and less reliable: the app waits about 1.5 to 2 seconds first, and some players move on by themselves or ignore the skip.</string>
     <string name="history_disliked">Disliked</string>
+    <string name="home_tagline">Skips the tracks you do not want to hear</string>
+    <string name="status_on">Skipping is on</string>
+    <string name="status_off">Skipping is off</string>
+    <string name="rules_section_detection">Detection</string>
+    <string name="dislike_warning_title">About the dislike option</string>
+    <string name="history_empty_hint">Skipped tracks will appear here.</string>
 </resources>
