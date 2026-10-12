@@ -13,3 +13,8 @@ release/
 .agents/
 CLAUDE.md
 .spectra.yaml
+
+# Release signing: never commit keys or passwords
+keystore.properties
+*.jks
+*.keystore

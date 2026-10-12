@@ -60,6 +60,16 @@ docs/            queue-probe-notes.md, screenshots, Spectra specs
 - A debug build answers `adb shell am broadcast -a com.mediaautoskipper.PROBE -p com.mediaautoskipper`, logging queue, metadata and playback state under the tag `MasProbe`. Service decisions are logged under `MediaAutoSkipper`.
 - Windows + Git Bash: set `MSYS_NO_PATHCONV=1` before `adb` commands that use `/sdcard` paths.
 
+### Release build and signing
+
+Release builds are signed with a key that only the maintainer holds; the key and its passwords are never committed (`*.jks`, `keystore.properties` are git-ignored). Without `keystore.properties` the release build is simply unsigned, so contributors can still build.
+
+```
+keytool -genkeypair -v -keystore media-auto-skipper.jks -alias mas -keyalg RSA -keysize 4096 -validity 10000
+```
+
+Then create `keystore.properties` in the project root with `storeFile`, `storePassword`, `keyAlias` and `keyPassword`, and run `./gradlew :app:assembleRelease`. Keep at least two backups of the keystore and its passwords: an update must be signed with the same key, and a lost key means users have to uninstall and reinstall. Verify a build with `apksigner verify --print-certs app-release.apk` and publish its SHA-256 next to the download.
+
 ### Translations
 
 UI strings live in `app/src/main/res/values*/strings.xml` (en, ko, ja, zh-CN, zh-TW). Add a language by creating a `values-<code>` folder, adding it to `res/xml/locales_config.xml` and to `LanguageChoice`. Native-speaker review of Korean and Japanese is especially welcome. `./gradlew lintDebug` fails on a missing translation.
@@ -140,6 +150,16 @@ docs/            queue-probe-notes.md、截圖、Spectra 規格
 - 沒有帳號時的手動測試:安裝 `fake-player`(`./gradlew :fake-player:assembleDebug`),它會發布一個含簡短播放清單的媒體工作階段;`adb shell am start -n com.spotify.music/fakeplayer.PlayerActivity --ez advance true` 可讓它前進。安裝真正的 Spotify 前請先解除安裝。
 - 除錯版會回應 `adb shell am broadcast -a com.mediaautoskipper.PROBE -p com.mediaautoskipper`,把佇列、metadata、播放狀態印到標籤 `MasProbe`;服務的判斷結果印在標籤 `MediaAutoSkipper`。
 - Windows + Git Bash:使用 `/sdcard` 路徑的 `adb` 指令前,先設定 `MSYS_NO_PATHCONV=1`。
+
+### 正式版建置與簽章
+
+正式版用只有維護者持有的金鑰簽章,金鑰與密碼絕不提交(`*.jks`、`keystore.properties` 已加入 `.gitignore`)。沒有 `keystore.properties` 時,release 版就只是未簽章,所以貢獻者照樣能建置。
+
+```
+keytool -genkeypair -v -keystore media-auto-skipper.jks -alias mas -keyalg RSA -keysize 4096 -validity 10000
+```
+
+接著在專案根目錄建立 `keystore.properties`,內容為 `storeFile`、`storePassword`、`keyAlias`、`keyPassword`,再執行 `./gradlew :app:assembleRelease`。請把金鑰檔與密碼至少備份兩份:更新必須用同一把金鑰簽章,金鑰一旦遺失,使用者就得解除安裝再重裝。可用 `apksigner verify --print-certs app-release.apk` 驗證,並在下載連結旁公布 SHA-256。
 
 ### 翻譯
 
