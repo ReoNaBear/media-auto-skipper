@@ -623,4 +623,17 @@ class SkipCoordinatorTest {
             assertTrue(t.calls.isEmpty(), "case $i: ${t.calls}")
         }
     }
+
+    @Test
+    fun untickingTheDislikeOptionDuringTheRatingDelayStillSkipsButDoesNotRate() {
+        ratingActive = true
+        ratingLatest = null
+        delayed.clear()
+        val t = FakeTarget(dislikeId = null, ratingSupported = true)
+        waitingFeed(t, "Summer Mix 2024 unticked")
+        ratingLatest = AppSettings(dislikeRules = emptySet())
+        runDelayed()
+        assertEquals(listOf("skip"), t.calls)
+        assertFalse(events.single().disliked)
+    }
 }

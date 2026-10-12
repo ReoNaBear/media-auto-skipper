@@ -11,7 +11,6 @@ import android.content.pm.ApplicationInfo
 import android.media.MediaMetadata
 import android.media.Rating
 import android.media.session.MediaController
-import android.media.session.PlaybackState
 import android.media.session.MediaSessionManager
 import android.os.Handler
 import android.os.Looper
@@ -214,8 +213,7 @@ private class ControllerTarget(private val controller: MediaController) : SkipTa
     override fun sendCustomAction(id: String) = controller.transportControls.sendCustomAction(id, null)
 
     override fun supportsRating(): Boolean =
-        controller.ratingType == Rating.RATING_THUMB_UP_DOWN &&
-            (controller.playbackState?.actions ?: 0L) and PlaybackState.ACTION_SET_RATING != 0L
+        DislikeSupport.supportsThumbRating(controller.ratingType, controller.playbackState?.actions ?: 0L)
 
     override fun sendRating(thumbUp: Boolean) =
         controller.transportControls.setRating(Rating.newThumbRating(thumbUp))

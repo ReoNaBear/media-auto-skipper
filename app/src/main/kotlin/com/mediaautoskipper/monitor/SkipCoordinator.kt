@@ -142,11 +142,13 @@ class SkipCoordinator(
 
             // A rating is set, not toggled, so it needs no rating check and no look at whether the player moved on.
             method == DislikeMethod.RATING ->
-                if (ratingSettleMs <= 0) {
-                    rateAndSkip(target, state, t, a, match, receivedAtMs)
-                } else {
-                    afterSettle(ratingSettleMs, target, state, t, receivedAtMs, settings) { artist, still, _ ->
+                afterSettle(ratingSettleMs, target, state, t, receivedAtMs, settings) { artist, still, now ->
+                    // The user may have unticked the dislike option during the wait: then only skip.
+                    val key = still.reason?.let(DislikeRules::keyForReason)
+                    if (key != null && key in now.dislikeRules) {
                         rateAndSkip(target, state, t, artist, still, receivedAtMs)
+                    } else {
+                        skipNow(target, state, t, artist, still, receivedAtMs, now)
                     }
                 }
 
@@ -330,7 +332,6 @@ class SkipCoordinator(
          */
         const val DISLIKE_SETTLE_MS = 2000L
 
-        /** How long to wait after a dislike to see whether the player moved to the next track by itself (it did so within 0.2 s on YouTube Music). */
         /**
          * How long a rating dislike waits after the track's first metadata. On the YouTube video app (emulator,
          * one session) a rating sent at once was not applied and the skip was ignored; at 0.8 s the skip was
@@ -339,6 +340,7 @@ class SkipCoordinator(
          */
         const val RATING_SETTLE_MS = 1500L
 
+        /** How long to wait after a dislike to see whether the player moved to the next track by itself (it did so within 0.2 s on YouTube Music). */
         const val DISLIKE_ADVANCE_CHECK_MS = 600L
     }
 }

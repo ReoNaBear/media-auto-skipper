@@ -40,6 +40,14 @@ enum class DislikeMethod {
 
 object DislikeSupport {
 
+    /**
+     * True when the player accepts a thumbs up/down rating: its rating type is thumbs up/down and its
+     * playback state advertises setting a rating. Star, heart and percentage ratings do not count.
+     */
+    fun supportsThumbRating(ratingType: Int, actions: Long): Boolean =
+        ratingType == android.media.Rating.RATING_THUMB_UP_DOWN &&
+            actions and android.media.session.PlaybackState.ACTION_SET_RATING != 0L
+
     /** The custom action wins; the rating call is the fallback; otherwise there is no way to dislike. */
     fun chooseMethod(actionId: String?, supportsRating: Boolean): DislikeMethod = when {
         actionId != null -> DislikeMethod.CUSTOM_ACTION

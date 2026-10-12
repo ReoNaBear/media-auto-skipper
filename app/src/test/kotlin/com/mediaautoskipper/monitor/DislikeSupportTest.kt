@@ -89,4 +89,22 @@ class DislikeSupportTest {
         assertEquals(DislikeMethod.RATING, DislikeSupport.chooseMethod(null, supportsRating = true))
         assertEquals(DislikeMethod.NONE, DislikeSupport.chooseMethod(null, supportsRating = false))
     }
+
+    @Test
+    fun onlyThumbsUpDownRatingWithTheSetRatingActionCounts() {
+        val setRating = android.media.session.PlaybackState.ACTION_SET_RATING
+        val playPause = android.media.session.PlaybackState.ACTION_PLAY_PAUSE
+        assertTrue(DislikeSupport.supportsThumbRating(android.media.Rating.RATING_THUMB_UP_DOWN, setRating or playPause))
+        assertFalse(DislikeSupport.supportsThumbRating(android.media.Rating.RATING_THUMB_UP_DOWN, playPause))
+        for (type in listOf(
+            android.media.Rating.RATING_NONE,
+            android.media.Rating.RATING_HEART,
+            android.media.Rating.RATING_3_STARS,
+            android.media.Rating.RATING_4_STARS,
+            android.media.Rating.RATING_5_STARS,
+            android.media.Rating.RATING_PERCENTAGE,
+        )) {
+            assertFalse(DislikeSupport.supportsThumbRating(type, setRating), "type $type")
+        }
+    }
 }
