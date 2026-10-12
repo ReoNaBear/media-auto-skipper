@@ -31,7 +31,7 @@ An open-source Android app that **skips tracks you do not want to hear**. It nev
 2. On your Android phone, open the file and allow "Install unknown apps" for your browser or file manager when asked.
 3. Follow [Use](#use) below.
 
-Requires Android 8.0 (API 26) or newer. This is a debug-signed build for early testers; it is not on Google Play. See the [changelog](CHANGELOG.md) and [what is still unverified](#verification-status).
+Requires Android 8.0 (API 26) or newer (tested only on an Android 17 / API 37 emulator so far). This is a debug-signed build for early testers; it is not on Google Play. See the [changelog](CHANGELOG.md) and [what is still unverified](#verification-status).
 
 Want to build it yourself or contribute? See [CONTRIBUTING.md](CONTRIBUTING.md).
 
@@ -80,6 +80,7 @@ Create `local.properties` with `sdk.dir=<path to your Android SDK>` (use forward
 
 1. Install the APK and open the app.
 2. Tap the button to open Notification Access settings and allow Media Auto-Skipper.
+   On Android 13 and newer, an app installed from an APK file is blocked from this setting at first ("Restricted setting" or access denied). Long-press the app icon, open App info, tap the ⋮ menu, choose **Allow restricted settings**, confirm with your PIN or fingerprint, then try again.
 3. Turn on "Skip matching tracks". It keeps working after you leave the app until you turn it off or reboot.
 4. Edit rules and monitored players in the Rules tab. Review skips in the History tab.
 
@@ -140,7 +141,7 @@ Create `local.properties` with `sdk.dir=<path to your Android SDK>` (use forward
 2. 在手機上點開這個檔案。系統詢問時，允許瀏覽器或檔案管理員「安裝不明應用程式」。
 3. 接著照下方[使用方式](#使用方式)操作。
 
-需要 Android 8.0（API 26）以上。這是給早期測試者的除錯簽章版本，尚未上架 Google Play。更新內容見[更新紀錄](CHANGELOG.md)，尚未驗證的項目見[驗證狀態](#驗證狀態)。
+需要 Android 8.0（API 26）以上（目前只在 Android 17／API 37 模擬器上測過）。這是給早期測試者的除錯簽章版本，尚未上架 Google Play。更新內容見[更新紀錄](CHANGELOG.md)，尚未驗證的項目見[驗證狀態](#驗證狀態)。
 
 想自己建置或參與開發？請看 [CONTRIBUTING.md](CONTRIBUTING.md)。
 
@@ -189,6 +190,7 @@ Create `local.properties` with `sdk.dir=<path to your Android SDK>` (use forward
 
 1. 安裝 APK 並開啟 App。
 2. 點按鈕開啟「通知存取權」設定，允許 Media Auto-Skipper。
+   Android 13 以上，從 APK 檔安裝的 App 一開始會被擋住這項設定（顯示「受限制的設定」或存取權遭拒）。請長按 App 圖示，進入「應用程式資訊」，點右上角 ⋮ 選單，選「**允許受限制的設定**」，用 PIN 或指紋確認後再試一次。
 3. 開啟「跳過符合規則的曲目」。離開 App 後仍會持續運作，直到你關閉開關或重新開機。
 4. 在「規則」分頁編輯規則與受監聽的播放器，在「紀錄」分頁查看跳過了什麼。
 
