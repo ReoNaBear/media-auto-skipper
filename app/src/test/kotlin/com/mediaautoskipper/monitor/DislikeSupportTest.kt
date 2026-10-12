@@ -77,4 +77,16 @@ class DislikeSupportTest {
             assertNull(DislikeSupport.findActionId(listOf(CustomActionInfo(id, "x"))), id)
         }
     }
+
+    @Test
+    fun theCustomActionIsPreferredOverRating() {
+        assertEquals(DislikeMethod.CUSTOM_ACTION, DislikeSupport.chooseMethod("thumbs_down_action", supportsRating = true))
+        assertEquals(DislikeMethod.CUSTOM_ACTION, DislikeSupport.chooseMethod("thumbs_down_action", supportsRating = false))
+    }
+
+    @Test
+    fun ratingIsTheFallbackAndOtherwiseThereIsNoMethod() {
+        assertEquals(DislikeMethod.RATING, DislikeSupport.chooseMethod(null, supportsRating = true))
+        assertEquals(DislikeMethod.NONE, DislikeSupport.chooseMethod(null, supportsRating = false))
+    }
 }

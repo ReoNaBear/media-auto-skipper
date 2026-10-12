@@ -64,3 +64,19 @@ Emulator (API 37), real YouTube app, 2026-10-12. The debug probe gained `--es ra
 - YouTube did not move to the next video after the dislike, so a skip is still needed.
 - Not yet tested: sending the rating right when a video starts (on YouTube Music a dislike sent in the first moments was not applied), and whether the dislike counts toward recommendations the same way a tap does.
 
+### Rating dislike on the YouTube video app, with the app doing it (change `rating-dislike-fallback`)
+
+Emulator (API 37), real YouTube app, TikTok playlist, rule "Dai Dai" marked as dislike, 2026-10-12. The app sends `setRating(thumbs down)` and then skips.
+
+| Wait after the first metadata | Rating applied | Skip worked | Note |
+| --- | --- | --- | --- |
+| 0 ms (at once) | no (thumb stayed outline) | no (still on the same video) | a second skip, retried when the artist arrived, would have been needed |
+| 800 ms | not checked | no for the first try; the retry about 3.5 s later worked | |
+| 1500 ms | yes (thumb filled when the video was opened again) | yes (moved to the next video) | `latencyMs` 1516 |
+
+So `RATING_SETTLE_MS` is 1500. This is one emulator session on a slow emulator; a real phone may allow less. The skip being ignored while a video is still loading explains part of the "about one second of video" seen on the phone. A rating sent twice is harmless; the app sends it once per video and retries only the skip when the same video shows up again.
+
+YouTube Music regression (custom action path, rule "Mix" marked): dislike sent about 2 s after the track started, the player moved on by itself within 0.1 s, no second skip, no rating call. Same as 0.2.2.
+
+Accounts affected by these tests: the YouTube video "Shakira & Burna Boy - Dai Dai" (rated and unrated several times, ended rated as a dislike) and several "Dance Workout Mix" tracks on YouTube Music (Bad Habits, Coming Home, Mood and the next ones in that album) were disliked.
+

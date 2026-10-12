@@ -17,6 +17,8 @@ import android.widget.TextView
  * or `--ez advance true` on the launch intent) moves to the next track and publishes its metadata.
  * It also publishes a "thumbs_down_action" custom action and a thumbs up/down user rating, like
  * YouTube Music does; the action toggles the rating, so a second press undoes the dislike.
+ * With `--ez ratingOnly true` it publishes no custom action and only accepts `setRating`, like the YouTube
+ * video app: a thumbs-down rating sets the dislike, a thumbs-up or unrated rating clears it.
  */
 class PlayerActivity : Activity() {
     private val playlist = listOf(
@@ -30,6 +32,7 @@ class PlayerActivity : Activity() {
     )
     private var index = -1
     private val disliked = mutableSetOf<Int>()
+    private var ratingOnly = false
     private lateinit var session: MediaSession
     private lateinit var label: TextView
 
@@ -53,6 +56,14 @@ class PlayerActivity : Activity() {
             setCallback(object : MediaSession.Callback() {
                 override fun onSkipToNext() = advance("skipToNext from controller")
 
+                override fun onSetRating(rating: Rating) {
+                    if (rating.ratingStyle != Rating.RATING_THUMB_UP_DOWN) return
+                    val down = rating.isRated && !rating.isThumbUp
+                    if (down) disliked.add(index) else disliked.remove(index)
+                    Log.i("FakePlayer", "setRating: track $index disliked=$down")
+                    publish()
+                }
+
                 override fun onCustomAction(action: String, extras: Bundle?) {
                     if (action != DISLIKE_ACTION) return
                     if (!disliked.add(index)) disliked.remove(index)
@@ -73,6 +84,11 @@ class PlayerActivity : Activity() {
     }
 
     private fun handle(intent: Intent) {
+        if (intent.hasExtra("ratingOnly")) {
+            ratingOnly = intent.getBooleanExtra("ratingOnly", false)
+            Log.i("FakePlayer", "ratingOnly=$ratingOnly")
+            publish()
+        }
         if (intent.getBooleanExtra("advance", false)) advance("intent")
     }
 
@@ -95,8 +111,12 @@ class PlayerActivity : Activity() {
         )
         session.setPlaybackState(
             PlaybackState.Builder()
-                .setActions(PlaybackState.ACTION_PLAY_PAUSE or PlaybackState.ACTION_SKIP_TO_NEXT)
-                .addCustomAction(DISLIKE_ACTION, "Dislike", android.R.drawable.ic_delete)
+                .apply {
+                    if (!ratingOnly) addCustomAction(DISLIKE_ACTION, "Dislike", android.R.drawable.ic_delete)
+                    setActions(
+                        PlaybackState.ACTION_PLAY_PAUSE or PlaybackState.ACTION_SKIP_TO_NEXT or PlaybackState.ACTION_SET_RATING,
+                    )
+                }
                 .setState(PlaybackState.STATE_PLAYING, 0, 1f)
                 .build(),
         )

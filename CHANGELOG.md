@@ -1,5 +1,12 @@
 # Changelog / 更新紀錄
 
+## 0.3.0 (2026-10-12)
+
+- "Also mark as dislike" now works on the YouTube video app too, through the official thumbs-down rating call, for players that offer thumbs up/down rating but no dislike action. YouTube Music keeps using its own dislike action unchanged. / 「同時標為不喜歡」現在在 YouTube 影片版也有效：沒有不喜歡動作、但支援上下拇指評分的播放器，改用官方的倒讚評分呼叫。YouTube Music 仍用它自己的不喜歡動作，行為不變。
+- On the YouTube video app a marked match waits about 1.5 seconds first: on the emulator a rating sent at once was not applied and the skip was ignored while the video was loading. Measured in one emulator session only. / 在 YouTube 影片版，勾選的規則命中後會先等約 1.5 秒：模擬器上立刻送出的評分不會生效，影片還在載入時跳過也會被忽略。只在一次模擬器測試中量過。
+- If the first skip is ignored, the skip is retried when the same video shows up again, without rating twice. / 第一次跳過被忽略時，同一支影片再次出現會重試跳過，但不會重複評分。
+- Whether YouTube counts the rating like a tap on the thumb for recommendations cannot be verified. / YouTube 是否把這個評分當成按下倒讚來調整推薦，無法驗證。
+
 ## 0.2.2 (2026-10-12)
 
 - Fix: turning the master switch off, removing the rule or removing the player during the roughly 2 second wait of a "dislike" rule now cancels the pending dislike and skip. Before, the dislike could still be sent after you turned the app off, and it cannot be undone. / 修正：勾選「不喜歡」的規則在約 2 秒等待期間，若你關閉總開關、刪除規則或移除播放器，現在會取消待送的不喜歡與跳過。之前關閉後仍可能送出，而且無法復原。

@@ -26,7 +26,27 @@ enum class RatingState {
     }
 }
 
+/** How a dislike reaches the player, in order of preference. */
+enum class DislikeMethod {
+    /** The player publishes a dislike custom action (YouTube Music). */
+    CUSTOM_ACTION,
+
+    /** No custom action, but the player accepts a thumbs up/down rating (the YouTube video app). */
+    RATING,
+
+    /** Nothing to send; the track is only skipped. */
+    NONE,
+}
+
 object DislikeSupport {
+
+    /** The custom action wins; the rating call is the fallback; otherwise there is no way to dislike. */
+    fun chooseMethod(actionId: String?, supportsRating: Boolean): DislikeMethod = when {
+        actionId != null -> DislikeMethod.CUSTOM_ACTION
+        supportsRating -> DislikeMethod.RATING
+        else -> DislikeMethod.NONE
+    }
+
 
     private const val KNOWN_ID = "thumbs_down_action"
 

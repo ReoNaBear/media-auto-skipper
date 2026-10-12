@@ -51,7 +51,7 @@ docs/            queue-probe-notes.md, screenshots, Spectra specs
 2. On a metadata change it passes package, title and artist to `SkipCoordinator`.
 3. `SkipCoordinator` checks the master switch, the monitored list, duplicates (same track) and the loop limit (20 skips in 60 s), then asks `TextFilterEngine` for a decision.
 4. On a match it calls `transportControls.skipToNext()`; if that throws it sends `KEYCODE_MEDIA_NEXT` to the same session, and records the skip in Room.
-5. If the matched rule is marked "also dislike" (`DislikeRules`, stored in DataStore as `dislike_rules`), the coordinator waits `DISLIKE_SETTLE_MS`, sends the player's dislike custom action (found by `DislikeSupport.findActionId`, only when `RatingState` allows it), then skips only if the player did not move on by itself within `DISLIKE_ADVANCE_CHECK_MS`.
+5. If the matched rule is marked "also dislike" (`DislikeRules`, stored in DataStore as `dislike_rules`), the coordinator waits `DISLIKE_SETTLE_MS`, sends the player's dislike custom action (found by `DislikeSupport.findActionId`, only when `RatingState` allows it), then skips only if the player did not move on by itself within `DISLIKE_ADVANCE_CHECK_MS`. A player with no custom action but thumbs up/down rating support (the YouTube video app) instead waits `RATING_SETTLE_MS`, sets a thumbs-down rating through `setRating`, and skips at once (`DislikeSupport.chooseMethod` picks the method).
 
 ### Testing
 
@@ -142,7 +142,7 @@ docs/            queue-probe-notes.md、截圖、Spectra 規格
 2. metadata 變動時,把套件、標題、藝人交給 `SkipCoordinator`。
 3. `SkipCoordinator` 依序檢查總開關、監聽清單、重複(同一首)與連跳上限(60 秒 20 次),再請 `TextFilterEngine` 判斷。
 4. 命中時呼叫 `transportControls.skipToNext()`;若丟出例外,改對同一工作階段送 `KEYCODE_MEDIA_NEXT`,並把這次跳過寫入 Room。
-5. 若命中的規則勾選了「同時標為不喜歡」(`DislikeRules`,以 `dislike_rules` 存在 DataStore),協調器會先等 `DISLIKE_SETTLE_MS`,再送出播放器的不喜歡自訂動作(用 `DislikeSupport.findActionId` 找、且 `RatingState` 允許時才送),之後只有在播放器沒有在 `DISLIKE_ADVANCE_CHECK_MS` 內自己換歌時才跳過。
+5. 若命中的規則勾選了「同時標為不喜歡」(`DislikeRules`,以 `dislike_rules` 存在 DataStore),協調器會先等 `DISLIKE_SETTLE_MS`,再送出播放器的不喜歡自訂動作(用 `DislikeSupport.findActionId` 找、且 `RatingState` 允許時才送),之後只有在播放器沒有在 `DISLIKE_ADVANCE_CHECK_MS` 內自己換歌時才跳過。沒有自訂動作、但支援上下拇指評分的播放器（YouTube 影片版）則等 `RATING_SETTLE_MS`，用 `setRating` 設定倒讚並立刻跳過（由 `DislikeSupport.chooseMethod` 選擇方式）。
 
 ### 測試
 

@@ -21,6 +21,12 @@ interface SkipTarget {
 
     /** Sends the custom action [id], which must be an id the player itself published. */
     fun sendCustomAction(id: String) {}
+
+    /** True when the player advertises setting a thumbs up/down rating (not stars or hearts). */
+    fun supportsRating(): Boolean = false
+
+    /** Sets a thumbs rating through the media controller. Setting it again is harmless; it does not toggle. */
+    fun sendRating(thumbUp: Boolean) {}
 }
 
 data class TrackIdentity(val pkg: String, val title: String, val artist: String)
@@ -53,6 +59,8 @@ class SkipCoordinator(
     private val isActive: () -> Boolean = { true },
     /** The settings in force right now, or null to keep using the ones passed to [onMetadata]. */
     private val currentSettings: () -> AppSettings? = { null },
+    /** Wait before a rating dislike; a parameter so tests can exercise the delayed path. */
+    private val ratingSettleMs: Long = RATING_SETTLE_MS,
 ) {
     private class State {
         var last: TrackIdentity? = null
@@ -119,28 +127,90 @@ class SkipCoordinator(
         }
 
         val wantsDislike = match.reason?.let(DislikeRules::keyForReason)?.let { it in settings.dislikeRules } == true
-        // Wait only when a dislike can actually be sent: the player publishes a dislike action and a rating that
-        // is not already a dislike. Otherwise (the YouTube video app, an already disliked track) skip at once.
-        if (wantsDislike && t.isNotEmpty() && target.dislikeActionId() != null && target.ratingState().allowsDislike) {
-            // Players ignore a rating sent while the track is still being set up, so wait a moment first.
-            if (state.pendingTitle == t) return
-            state.pendingTitle = t
-            schedule(DISLIKE_SETTLE_MS) {
-                if (state.pendingTitle != t) return@schedule
-                state.pendingTitle = null
-                val current = state.last
-                if (current == null || current.title != t) return@schedule
-                // The user may have turned the switch off or edited the rules during the wait.
-                if (!isActive()) return@schedule
-                val now = currentSettings() ?: settings
-                if (target.packageName !in now.monitoredPackages) return@schedule
-                val still = TextFilterEngine.evaluate(t, current.artist, now.filterConfig)
-                if (!still.matched) return@schedule
-                skipNow(target, state, t, current.artist, still, receivedAtMs, now)
-            }
+        val method = if (wantsDislike && t.isNotEmpty()) {
+            DislikeSupport.chooseMethod(target.dislikeActionId(), target.supportsRating())
+        } else {
+            DislikeMethod.NONE
+        }
+        when {
+            // Wait only when a custom-action dislike can actually be sent: the rating is not already a dislike.
+            // Players ignore a dislike sent while the track is still being set up, so wait a moment first.
+            method == DislikeMethod.CUSTOM_ACTION && target.ratingState().allowsDislike ->
+                afterSettle(DISLIKE_SETTLE_MS, target, state, t, receivedAtMs, settings) { artist, still, now ->
+                    skipNow(target, state, t, artist, still, receivedAtMs, now)
+                }
+
+            // A rating is set, not toggled, so it needs no rating check and no look at whether the player moved on.
+            method == DislikeMethod.RATING ->
+                if (ratingSettleMs <= 0) {
+                    rateAndSkip(target, state, t, a, match, receivedAtMs)
+                } else {
+                    afterSettle(ratingSettleMs, target, state, t, receivedAtMs, settings) { artist, still, _ ->
+                        rateAndSkip(target, state, t, artist, still, receivedAtMs)
+                    }
+                }
+
+            // No dislike method, an unmarked rule, or a track that is already disliked: a plain, immediate skip.
+            else -> skipNow(target, state, t, a, match, receivedAtMs, settings)
+        }
+    }
+
+    /**
+     * Runs [act] after [delayMs], unless the track changed in the meantime. It first checks again that the
+     * master switch is on, that the player is still monitored and that the rule still matches, using the
+     * settings in force by then, because the user may have changed them during the wait.
+     */
+    private fun afterSettle(
+        delayMs: Long,
+        target: SkipTarget,
+        state: State,
+        t: String,
+        receivedAtMs: Long,
+        settings: AppSettings,
+        act: (artist: String, match: MatchResult, settings: AppSettings) -> Unit,
+    ) {
+        if (state.pendingTitle == t) return
+        state.pendingTitle = t
+        schedule(delayMs) {
+            if (state.pendingTitle != t) return@schedule
+            state.pendingTitle = null
+            val current = state.last
+            if (current == null || current.title != t) return@schedule
+            if (!isActive()) return@schedule
+            val now = currentSettings() ?: settings
+            if (target.packageName !in now.monitoredPackages) return@schedule
+            val still = TextFilterEngine.evaluate(t, current.artist, now.filterConfig)
+            if (!still.matched) return@schedule
+            act(current.artist, still, now)
+        }
+    }
+
+    /** Sets a thumbs-down rating once per track, then skips right away. */
+    private fun rateAndSkip(
+        target: SkipTarget,
+        state: State,
+        t: String,
+        a: String,
+        match: MatchResult,
+        receivedAtMs: Long,
+    ) {
+        if (t == state.dislikedTitle) {
+            // The same track again (its artist arrived, or the first skip was ignored): do not rate twice,
+            // but try the skip again so the track is not left playing.
+            log("rating already sent for this track, retrying the skip pkg=${target.packageName}")
+            trySkipToNext(target)
             return
         }
-        skipNow(target, state, t, a, match, receivedAtMs, settings)
+        val disliked = try {
+            target.sendRating(thumbUp = false)
+            log("dislike sent via rating pkg=${target.packageName}")
+            state.dislikedTitle = t
+            true
+        } catch (e: Exception) {
+            log("sendRating threw ${e.javaClass.simpleName}: ${e.message}")
+            false
+        }
+        finishSkip(target, state, t, a, match, receivedAtMs, disliked = disliked, skipNeeded = true)
     }
 
     private fun skipNow(
@@ -261,6 +331,14 @@ class SkipCoordinator(
         const val DISLIKE_SETTLE_MS = 2000L
 
         /** How long to wait after a dislike to see whether the player moved to the next track by itself (it did so within 0.2 s on YouTube Music). */
+        /**
+         * How long a rating dislike waits after the track's first metadata. On the YouTube video app (emulator,
+         * one session) a rating sent at once was not applied and the skip was ignored; at 0.8 s the skip was
+         * still ignored; at 1.5 s the rating was applied and the skip worked. Tuned on one emulator, so a
+         * faster phone may allow less.
+         */
+        const val RATING_SETTLE_MS = 1500L
+
         const val DISLIKE_ADVANCE_CHECK_MS = 600L
     }
 }

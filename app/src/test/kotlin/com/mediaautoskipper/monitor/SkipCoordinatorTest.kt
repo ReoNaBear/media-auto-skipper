@@ -13,6 +13,8 @@ private class FakeTarget(
     var dislikeId: String? = null,
     var rating: RatingState = RatingState.UNRATED,
     var dislikeThrows: Boolean = false,
+    var ratingSupported: Boolean = false,
+    var ratingThrows: Boolean = false,
 ) : SkipTarget {
     var skips = 0
     var keys = 0
@@ -29,6 +31,13 @@ private class FakeTarget(
     override fun dislikeActionId(): String? = dislikeId
 
     override fun ratingState(): RatingState = rating
+
+    override fun supportsRating(): Boolean = ratingSupported
+
+    override fun sendRating(thumbUp: Boolean) {
+        if (ratingThrows) throw IllegalStateException("boom")
+        calls += if (thumbUp) "rate:up" else "rate:down"
+    }
 
     override fun sendCustomAction(id: String) {
         if (dislikeThrows) throw IllegalStateException("boom")
@@ -469,6 +478,149 @@ class SkipCoordinatorTest {
             delayedFeed(t, "Summer Mix 2024 $rating")
             assertEquals(listOf("skip"), t.calls, "rating=$rating")
             assertTrue(delayed.isEmpty(), "rating=$rating")
+        }
+    }
+
+    // --- dislike through the rating API ---
+
+    @Test
+    fun ratingOnlyPlayerGetsAThumbsDownThenASkip() {
+        val t = FakeTarget(dislikeId = null, ratingSupported = true)
+        feedWith(t, dislikeMix, "Summer Mix 2024")
+        assertEquals(listOf("rate:down", "skip"), t.calls)
+        assertTrue(events.single().disliked)
+    }
+
+    @Test
+    fun ratingPathIsNotBlockedByAnUnpublishedRating() {
+        val t = FakeTarget(dislikeId = null, ratingSupported = true, rating = RatingState.UNKNOWN)
+        feedWith(t, dislikeMix, "Summer Mix 2024")
+        assertEquals(listOf("rate:down", "skip"), t.calls)
+    }
+
+    @Test
+    fun ratingPathSendsEvenWhenTheRatingLooksLikeADislike() {
+        val t = FakeTarget(dislikeId = null, ratingSupported = true, rating = RatingState.DISLIKED)
+        feedWith(t, dislikeMix, "Summer Mix 2024")
+        assertEquals(listOf("rate:down", "skip"), t.calls)
+    }
+
+    @Test
+    fun theCustomActionWinsOverRating() {
+        val t = FakeTarget(dislikeId = dislikeId, ratingSupported = true)
+        feedWith(t, dislikeMix, "Summer Mix 2024")
+        assertEquals(listOf("dislike:$dislikeId", "skip"), t.calls)
+    }
+
+    @Test
+    fun noActionAndNoRatingSupportOnlySkips() {
+        val t = FakeTarget(dislikeId = null, ratingSupported = false)
+        feedWith(t, dislikeMix, "Summer Mix 2024")
+        assertEquals(listOf("skip"), t.calls)
+        assertFalse(events.single().disliked)
+    }
+
+    @Test
+    fun unmarkedRuleOnARatingPlayerOnlySkips() {
+        val t = FakeTarget(dislikeId = null, ratingSupported = true)
+        feedWith(t, dislikeMix, "合輯 Vol.1")
+        assertEquals(listOf("skip"), t.calls)
+    }
+
+    @Test
+    fun throwingRatingStillSkips() {
+        val t = FakeTarget(dislikeId = null, ratingSupported = true, ratingThrows = true)
+        feedWith(t, dislikeMix, "Summer Mix 2024")
+        assertEquals(listOf("skip"), t.calls)
+        assertFalse(events.single().disliked)
+    }
+
+    @Test
+    fun ratingIsSentOncePerTrackButTheSkipIsRetriedWhenTheTrackShowsAgain() {
+        val t = FakeTarget(dislikeId = null, ratingSupported = true)
+        coordinator.onMetadata(t, "Summer Mix 2024", "", clock, true, dislikeMix)
+        coordinator.onMetadata(t, "Summer Mix 2024", "DJ", clock, true, dislikeMix)
+        assertEquals(listOf("rate:down", "skip", "skip"), t.calls)
+        assertEquals(1, events.size)
+    }
+
+    @Test
+    fun ratingPathWaitsOnlyItsOwnDelayAndHasNoCheckDelay() {
+        val t = FakeTarget(dislikeId = null, ratingSupported = true)
+        delayedFeed(t, "Summer Mix 2024")
+        assertTrue(t.calls.isEmpty())
+        assertEquals(SkipCoordinator.RATING_SETTLE_MS, delayed.single().delayMs)
+        delayed.removeFirst().task()
+        assertEquals(listOf("rate:down", "skip"), t.calls)
+        assertTrue(delayed.isEmpty())
+    }
+
+    @Test
+    fun ratingPathStopsAfterLoopProtectionPauses() {
+        val t = FakeTarget(dislikeId = null, ratingSupported = true)
+        repeat(SkipCoordinator.LOOP_MAX_SKIPS) { i ->
+            clock += 1000
+            feedWith(t, dislikeMix, "Mix $i")
+        }
+        val sent = t.calls.count { it.startsWith("rate") }
+        assertEquals(SkipCoordinator.LOOP_MAX_SKIPS, sent)
+        clock += 1000
+        feedWith(t, dislikeMix, "Mix after pause")
+        assertEquals(sent, t.calls.count { it.startsWith("rate") })
+    }
+
+    @Test
+    fun masterSwitchOffSendsNoRating() {
+        val t = FakeTarget(dislikeId = null, ratingSupported = true)
+        feedWith(t, dislikeMix, "Summer Mix 2024", active = false)
+        assertTrue(t.calls.isEmpty())
+    }
+
+    // --- rating dislike with a settle delay ---
+
+    private var ratingActive = true
+    private var ratingLatest: AppSettings? = null
+    private val waitingCoordinator = SkipCoordinator(
+        { clock },
+        { events += it },
+        { paused += it },
+        schedule = { ms, task -> delayed += Delayed(ms, task) },
+        isActive = { ratingActive },
+        currentSettings = { ratingLatest },
+        ratingSettleMs = 500,
+    )
+
+    private fun waitingFeed(t: FakeTarget, title: String) =
+        waitingCoordinator.onMetadata(t, title, "", clock, true, dislikeMix)
+
+    @Test
+    fun ratingWaitsForItsSettleDelayThenRatesAndSkipsWithoutACheckDelay() {
+        val t = FakeTarget(dislikeId = null, ratingSupported = true)
+        waitingFeed(t, "Summer Mix 2024")
+        assertTrue(t.calls.isEmpty())
+        assertEquals(500L, delayed.single().delayMs)
+        runDelayed()
+        assertEquals(listOf("rate:down", "skip"), t.calls)
+        assertTrue(delayed.isEmpty())
+    }
+
+    @Test
+    fun switchOffRuleRemovalOrTrackChangeDuringTheRatingDelayCancelsEverything() {
+        val cases = listOf<(FakeTarget) -> Unit>(
+            { ratingActive = false },
+            { ratingLatest = AppSettings(keywords = emptyList(), dislikeRules = setOf("keyword:Mix")) },
+            { ratingLatest = AppSettings(monitoredPackages = emptyList(), dislikeRules = setOf("keyword:Mix")) },
+            { t -> waitingFeed(t, "Good Song") },
+        )
+        for ((i, change) in cases.withIndex()) {
+            delayed.clear()
+            ratingActive = true
+            ratingLatest = null
+            val t = FakeTarget(dislikeId = null, ratingSupported = true)
+            waitingFeed(t, "Summer Mix 2024 #$i")
+            change(t)
+            runDelayed()
+            assertTrue(t.calls.isEmpty(), "case $i: ${t.calls}")
         }
     }
 }
