@@ -80,3 +80,7 @@ YouTube Music regression (custom action path, rule "Mix" marked): dislike sent a
 
 Accounts affected by these tests: the YouTube video "Shakira & Burna Boy - Dai Dai" (rated and unrated several times, ended rated as a dislike) and several "Dance Workout Mix" tracks on YouTube Music (Bad Habits, Coming Home, Mood and the next ones in that album) were disliked.
 
+
+## Screenshots and visual checks (change `ui-redesign`)
+
+The README screenshots (`docs/screenshots/home.png`, `rules.png`, `history.png`) were taken on an Android emulator (API 37, 1080x2400, English, light theme) with the fake player and these rules: Simplified Chinese and "Mix" marked as dislike, the other defaults unmarked. They show the 0.2.0 build. The dark theme was checked by eye on the same emulator (History and Rules tabs): no clipped text and the warning card stays readable; no automated contrast check was run. A signed release build of 0.2.0 was built and verified with `apksigner verify`.

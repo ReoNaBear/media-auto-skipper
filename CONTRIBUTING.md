@@ -4,7 +4,7 @@ English first, 繁體中文 follows below. / 英文在前,繁體中文在後。
 
 ## Developer guide
 
-Media Auto-Skipper is version 0.1.0. Contributions are welcome: bug reports, translations, and code. By contributing you agree your work is released under the [MIT license](LICENSE).
+Media Auto-Skipper is version 0.2.0. Contributions are welcome: bug reports, translations, and code. By contributing you agree your work is released under the [MIT license](LICENSE).
 
 ### Ground rules
 
@@ -95,7 +95,7 @@ Requirements live in `docs/spectra/specs/` and finished changes in `docs/spectra
 
 ## 開發者指南
 
-Media Auto-Skipper 目前是 0.1.0 版。歡迎回報問題、貢獻翻譯與程式碼。提交貢獻即表示你同意以 [MIT 授權](LICENSE)釋出你的內容。
+Media Auto-Skipper 目前是 0.2.0 版。歡迎回報問題、貢獻翻譯與程式碼。提交貢獻即表示你同意以 [MIT 授權](LICENSE)釋出你的內容。
 
 ### 基本原則
 

@@ -13,8 +13,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -129,36 +127,29 @@ fun HistoryContent(
         } else {
             LazyColumn(verticalArrangement = Arrangement.spacedBy(Dimens.sm)) {
                 items(shown, key = { it.id }) { r ->
-                    Card(
-                        Modifier.fillMaxWidth(),
-                        shape = RoundedCornerShape(Dimens.cardRadius),
-                        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow),
-                        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
-                    ) {
-                        Column(Modifier.padding(Dimens.md), verticalArrangement = Arrangement.spacedBy(Dimens.xs)) {
-                            Text(r.title.ifBlank { "—" }, style = MaterialTheme.typography.titleMedium)
-                            Text(
-                                listOf(r.artist, playerLabel(r.pkg)).filter { it.isNotBlank() }.joinToString(" · "),
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            )
-                            Row(horizontalArrangement = Arrangement.spacedBy(Dimens.sm), verticalAlignment = Alignment.CenterVertically) {
-                                Pill(r.reason, MaterialTheme.colorScheme.secondaryContainer, MaterialTheme.colorScheme.onSecondaryContainer)
-                                if (r.disliked) {
-                                    Pill(
-                                        stringResource(R.string.history_disliked),
-                                        MaterialTheme.colorScheme.tertiaryContainer,
-                                        MaterialTheme.colorScheme.onTertiaryContainer,
-                                        Modifier.testTag(HistoryTags.disliked(r.id)),
-                                    )
-                                }
+                    SectionCard(title = null) {
+                        Text(r.title.ifBlank { "—" }, style = MaterialTheme.typography.titleMedium)
+                        Text(
+                            listOf(r.artist, playerLabel(r.pkg)).filter { it.isNotBlank() }.joinToString(" · "),
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                        Row(horizontalArrangement = Arrangement.spacedBy(Dimens.sm), verticalAlignment = Alignment.CenterVertically) {
+                            Pill(r.reason, MaterialTheme.colorScheme.secondaryContainer, MaterialTheme.colorScheme.onSecondaryContainer)
+                            if (r.disliked) {
+                                Pill(
+                                    stringResource(R.string.history_disliked),
+                                    MaterialTheme.colorScheme.tertiaryContainer,
+                                    MaterialTheme.colorScheme.onTertiaryContainer,
+                                    Modifier.testTag(HistoryTags.disliked(r.id)),
+                                )
                             }
-                            Text(
-                                format.format(Date(r.timeMillis)),
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            )
                         }
+                        Text(
+                            format.format(Date(r.timeMillis)),
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
                     }
                 }
                 item { Box(Modifier.padding(bottom = Dimens.md)) }

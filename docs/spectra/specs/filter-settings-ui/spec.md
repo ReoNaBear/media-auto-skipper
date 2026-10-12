@@ -78,7 +78,7 @@ The app SHALL store keywords, regular expression rules, toggles and the monitore
 ---
 ### Requirement: Per-rule dislike option
 
-Each keyword rule, each regular expression rule and the Simplified Chinese rule SHALL have its own option "also mark as dislike", off by default. The option SHALL be stored with the settings and survive an app restart. The Rules screen SHALL show a note that marking a rule affects the user's account recommendations and cannot be undone by the app.
+Each keyword rule, each regular expression rule and the Simplified Chinese rule SHALL have its own option "also mark as dislike", off by default. The option SHALL be stored with the settings and survive an app restart. The Rules screen SHALL show a warning, in a visually distinct card, that marking a rule affects the user's account recommendations and cannot be undone by the app, and that it makes skipping slower and less reliable because the app waits before acting and some players move on by themselves or ignore the skip.
 
 #### Scenario: Default is off
 
@@ -99,6 +99,27 @@ Each keyword rule, each regular expression rule and the Simplified Chinese rule 
 
 - **WHEN** the Simplified Chinese rule is turned off
 - **THEN** its dislike option is disabled
+
+#### Scenario: Warning about slower skipping
+
+- **WHEN** the user opens the Rules screen
+- **THEN** a warning is shown that names three consequences: the dislike is written to the account and affects recommendations, the app cannot undo it, and skipping becomes slower and less reliable
+
+#### Scenario: Warning in every language
+
+- **WHEN** the interface language is any of the five supported languages
+- **THEN** the warning is shown in that language
+
+
+<!-- @trace
+source: ui-redesign
+updated: 2026-10-12
+code:
+  - app/src/main/kotlin/com/mediaautoskipper/ui/HistoryScreen.kt
+  - docs/screenshots/history.png
+  - CONTRIBUTING.md
+  - docs/queue-probe-notes.md
+-->
 
 ---
 ### Requirement: Dislike option follows rule edits
