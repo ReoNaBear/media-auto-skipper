@@ -7,3 +7,9 @@ build/
 local.properties
 .kotlin/
 release/
+
+# Local tooling, not part of the app
+.claude/
+.agents/
+CLAUDE.md
+.spectra.yaml
