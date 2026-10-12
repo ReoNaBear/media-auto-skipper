@@ -103,39 +103,39 @@ class SkipCoordinatorTest {
     @Test
     fun tenSkipsInWindowPauseAndNotify() {
         val t = FakeTarget()
-        repeat(10) { i ->
+        repeat(SkipCoordinator.LOOP_MAX_SKIPS) { i ->
             clock += 1000
             feed(t, "华语精选 $i")
         }
-        assertEquals(10, t.skips)
+        assertEquals(SkipCoordinator.LOOP_MAX_SKIPS, t.skips)
         assertEquals(listOf(DefaultPlayers.SPOTIFY), paused)
         clock += 1000
         feed(t, "华语精选 11")
-        assertEquals(10, t.skips)
+        assertEquals(SkipCoordinator.LOOP_MAX_SKIPS, t.skips)
     }
 
     @Test
     fun nonMatchingTrackResumesAfterPause() {
         val t = FakeTarget()
-        repeat(10) { i ->
+        repeat(SkipCoordinator.LOOP_MAX_SKIPS) { i ->
             clock += 1000
             feed(t, "华语精选 $i")
         }
         feed(t, "Yesterday")
         feed(t, "华语精选 again")
-        assertEquals(11, t.skips)
+        assertEquals(SkipCoordinator.LOOP_MAX_SKIPS + 1, t.skips)
     }
 
     @Test
     fun resumesAfterSixtySecondsWithoutSkip() {
         val t = FakeTarget()
-        repeat(10) { i ->
+        repeat(SkipCoordinator.LOOP_MAX_SKIPS) { i ->
             clock += 1000
             feed(t, "华语精选 $i")
         }
         clock += SkipCoordinator.LOOP_WINDOW_MS
         feed(t, "华语精选 later")
-        assertEquals(11, t.skips)
+        assertEquals(SkipCoordinator.LOOP_MAX_SKIPS + 1, t.skips)
     }
 
     @Test

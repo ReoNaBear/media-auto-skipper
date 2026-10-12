@@ -63,11 +63,11 @@ The service SHALL identify a track by package name, title and artist, and SHALL 
 ---
 ### Requirement: Skip loop protection
 
-The service SHALL stop skipping after 10 consecutive skips within 60 seconds in the same session, and SHALL resume only after a track that does not match is observed or 60 seconds pass without a skip. When protection triggers, the service SHALL show a notification to the user.
+The service SHALL stop skipping after 20 consecutive skips within 60 seconds in the same session, and SHALL resume only after a track that does not match is observed or 60 seconds pass without a skip. When protection triggers, the service SHALL show a notification to the user.
 
 #### Scenario: Whole playlist matches
 
-- **WHEN** every track in a playlist matches and 10 skips occur within 60 seconds
+- **WHEN** every track in a playlist matches and 20 skips occur within 60 seconds
 - **THEN** the service stops skipping and posts a notification that skipping is paused
 
 ---

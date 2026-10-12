@@ -125,7 +125,7 @@ class SkipCoordinator(
 
     companion object {
         // Design parameters, not measurements.
-        const val LOOP_MAX_SKIPS = 10
+        const val LOOP_MAX_SKIPS = 20
         const val LOOP_WINDOW_MS = 60_000L
     }
 }

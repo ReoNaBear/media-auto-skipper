@@ -49,7 +49,7 @@ docs/            queue-probe-notes.md, screenshots, Spectra specs
 
 1. `MediaMonitorService` finds active sessions through `MediaSessionManager` and registers a `MediaController` callback for each monitored package.
 2. On a metadata change it passes package, title and artist to `SkipCoordinator`.
-3. `SkipCoordinator` checks the master switch, the monitored list, duplicates (same track) and the loop limit (10 skips in 60 s), then asks `TextFilterEngine` for a decision.
+3. `SkipCoordinator` checks the master switch, the monitored list, duplicates (same track) and the loop limit (20 skips in 60 s), then asks `TextFilterEngine` for a decision.
 4. On a match it calls `transportControls.skipToNext()`; if that throws it sends `KEYCODE_MEDIA_NEXT` to the same session, and records the skip in Room.
 
 ### Testing
@@ -129,7 +129,7 @@ docs/            queue-probe-notes.md、截圖、Spectra 規格
 
 1. `MediaMonitorService` 透過 `MediaSessionManager` 找到使用中的工作階段,替每個受監聽的套件註冊 `MediaController` 回呼。
 2. metadata 變動時,把套件、標題、藝人交給 `SkipCoordinator`。
-3. `SkipCoordinator` 依序檢查總開關、監聽清單、重複(同一首)與連跳上限(60 秒 10 次),再請 `TextFilterEngine` 判斷。
+3. `SkipCoordinator` 依序檢查總開關、監聽清單、重複(同一首)與連跳上限(60 秒 20 次),再請 `TextFilterEngine` 判斷。
 4. 命中時呼叫 `transportControls.skipToNext()`;若丟出例外,改對同一工作階段送 `KEYCODE_MEDIA_NEXT`,並把這次跳過寫入 Room。
 
 ### 測試
