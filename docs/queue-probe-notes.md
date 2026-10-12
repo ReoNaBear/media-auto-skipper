@@ -55,3 +55,12 @@ What was observed on YouTube Music:
 - Latency with a dislike: 3.5 s from the first metadata to the finished skip was measured with a 1.5 s advance check; with the final 0.6 s check, about 2.7 s is expected (not measured again). Skip-only rules keep the earlier 1 to 20 ms service-side time.
 - Effect on the account: tracks used in these tests were disliked on the signed-in YouTube Music account, among them: TikTok (Blueface), SMOOTH DJ LOVE TIKTOK, Call of Silence (TikTok remix), plus two from timing experiments, "Choose a Player" and "Always Loving Miracles".
 
+## Rating API on the YouTube video app (experiment)
+
+Emulator (API 37), real YouTube app, 2026-10-12. The debug probe gained `--es rate down|up|none`, which calls `transportControls.setRating(...)` on every active session.
+
+- Playing a video from a playlist ("Dai Dai"), `rate down` made the thumbs-down button in the YouTube playlist panel turn filled; `rate none` turned it back to outline. So the official rating API works on the YouTube video app, in both directions, and setting the same rating twice is harmless (it sets, it does not toggle).
+- The session still reports `userRating=null`, so the current rating cannot be read there.
+- YouTube did not move to the next video after the dislike, so a skip is still needed.
+- Not yet tested: sending the rating right when a video starts (on YouTube Music a dislike sent in the first moments was not applied), and whether the dislike counts toward recommendations the same way a tap does.
+

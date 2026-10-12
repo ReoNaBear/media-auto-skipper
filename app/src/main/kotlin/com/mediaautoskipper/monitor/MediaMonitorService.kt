@@ -110,6 +110,18 @@ class MediaMonitorService : NotificationListenerService() {
                         Log.i(TAG, "probe sent custom action $id to ${it.packageName}")
                     }
                 }
+                // `--es rate down|up|none` calls transportControls.setRating on every active session (experiment).
+                intent.getStringExtra("rate")?.let { r ->
+                    val rating = when (r) {
+                        "down" -> Rating.newThumbRating(false)
+                        "up" -> Rating.newThumbRating(true)
+                        else -> Rating.newUnratedRating(Rating.RATING_THUMB_UP_DOWN)
+                    }
+                    sessions.forEach {
+                        it.transportControls.setRating(rating)
+                        Log.i(TAG, "probe set rating $r on ${it.packageName}")
+                    }
+                }
                 QueueProbe.dumpAll(sessions)
             }
         }
