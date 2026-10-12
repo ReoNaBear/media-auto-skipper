@@ -49,6 +49,10 @@ class SkipCoordinator(
     private val log: (String) -> Unit = {},
     /** Runs [task] after the given delay on the thread that calls [onMetadata]. The default runs it at once. */
     private val schedule: (delayMs: Long, task: () -> Unit) -> Unit = { _, task -> task() },
+    /** Whether the master switch is effective right now; checked again when a delayed skip runs. */
+    private val isActive: () -> Boolean = { true },
+    /** The settings in force right now, or null to keep using the ones passed to [onMetadata]. */
+    private val currentSettings: () -> AppSettings? = { null },
 ) {
     private class State {
         var last: TrackIdentity? = null
@@ -115,8 +119,9 @@ class SkipCoordinator(
         }
 
         val wantsDislike = match.reason?.let(DislikeRules::keyForReason)?.let { it in settings.dislikeRules } == true
-        // A player that publishes no dislike action (the YouTube video app) gets a plain, immediate skip.
-        if (wantsDislike && t.isNotEmpty() && target.dislikeActionId() != null) {
+        // Wait only when a dislike can actually be sent: the player publishes a dislike action and a rating that
+        // is not already a dislike. Otherwise (the YouTube video app, an already disliked track) skip at once.
+        if (wantsDislike && t.isNotEmpty() && target.dislikeActionId() != null && target.ratingState().allowsDislike) {
             // Players ignore a rating sent while the track is still being set up, so wait a moment first.
             if (state.pendingTitle == t) return
             state.pendingTitle = t
@@ -125,7 +130,13 @@ class SkipCoordinator(
                 state.pendingTitle = null
                 val current = state.last
                 if (current == null || current.title != t) return@schedule
-                skipNow(target, state, t, current.artist, match, receivedAtMs, settings)
+                // The user may have turned the switch off or edited the rules during the wait.
+                if (!isActive()) return@schedule
+                val now = currentSettings() ?: settings
+                if (target.packageName !in now.monitoredPackages) return@schedule
+                val still = TextFilterEngine.evaluate(t, current.artist, now.filterConfig)
+                if (!still.matched) return@schedule
+                skipNow(target, state, t, current.artist, still, receivedAtMs, now)
             }
             return
         }

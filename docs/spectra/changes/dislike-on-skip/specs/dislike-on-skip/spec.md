@@ -25,7 +25,7 @@ When a track matches a rule that the user marked "dislike and skip", the service
 
 ### Requirement: Wait for the player and avoid a double skip
 
-For a marked rule, the service SHALL wait a settle delay after the track's first metadata before sending the dislike, and SHALL skip to the next track only if the player has not already moved to a different track within a short check delay after the dislike was sent. A pending action SHALL be dropped when the track changes before it runs. Rules that are not marked, and marked rules on a player that publishes no dislike action, SHALL NOT be delayed.
+For a marked rule, the service SHALL wait a settle delay after the track's first metadata before sending the dislike, and SHALL skip to the next track only if the player has not already moved to a different track within a short check delay after the dislike was sent. A pending action SHALL be dropped when the track changes before it runs. Rules that are not marked, marked rules on a player that publishes no dislike action, and marked rules on a track whose rating is already a dislike or not published, SHALL NOT be delayed. When the delay ends, the service SHALL check again that the master switch is on, that the player is still monitored and that the rule still matches, using the current settings.
 
 #### Scenario: Settle delay
 
@@ -45,6 +45,16 @@ For a marked rule, the service SHALL wait a settle delay after the track's first
 #### Scenario: Player without a dislike action
 
 - **WHEN** a marked rule matches on a player that publishes no dislike action
+- **THEN** the service skips at once, without the settle delay
+
+#### Scenario: Switch or rules change during the delay
+
+- **WHEN** the master switch is turned off, the rule is removed, or the player is no longer monitored while the settle delay is running
+- **THEN** the pending dislike and skip are dropped, and if only the rule's dislike option was turned off the track is still skipped without a dislike
+
+#### Scenario: Rating already a dislike or not published
+
+- **WHEN** a marked rule matches a track whose rating is already thumbs-down or is not published
 - **THEN** the service skips at once, without the settle delay
 
 #### Scenario: Track changes during the delay

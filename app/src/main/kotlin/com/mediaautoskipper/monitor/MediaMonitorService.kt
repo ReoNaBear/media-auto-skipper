@@ -81,6 +81,8 @@ class MediaMonitorService : NotificationListenerService() {
             onLoopPaused = ::notifyPaused,
             log = { Log.i(TAG, it) },
             schedule = { delayMs, task -> handler.postDelayed(task, delayMs) },
+            isActive = { enableState.isActive(Settings.Global.getInt(contentResolver, Settings.Global.BOOT_COUNT, 0)) },
+            currentSettings = { settings },
         )
         app.settingsStore.settings.onEach { settings = it }.launchIn(scope)
         app.settingsStore.enableState.onEach { enableState = it }.launchIn(scope)

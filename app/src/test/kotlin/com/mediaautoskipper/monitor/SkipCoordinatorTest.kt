@@ -406,4 +406,69 @@ class SkipCoordinatorTest {
         delayed.forEach { it.task() }
         assertTrue(t.calls.isEmpty())
     }
+
+    // --- state changes during the settle delay ---
+
+    private var stillActive = true
+    private var latestSettings: AppSettings? = null
+    private val guardedCoordinator = SkipCoordinator(
+        { clock },
+        { events += it },
+        { paused += it },
+        schedule = { ms, task -> delayed += Delayed(ms, task) },
+        isActive = { stillActive },
+        currentSettings = { latestSettings },
+    )
+
+    private fun guardedFeed(t: FakeTarget, title: String) =
+        guardedCoordinator.onMetadata(t, title, "", clock, true, dislikeMix)
+
+    @Test
+    fun turningTheMasterSwitchOffDuringTheDelayCancelsTheDislikeAndTheSkip() {
+        val t = FakeTarget(dislikeId = dislikeId)
+        guardedFeed(t, "Summer Mix 2024")
+        stillActive = false
+        runDelayed()
+        assertTrue(t.calls.isEmpty())
+        assertTrue(events.isEmpty())
+    }
+
+    @Test
+    fun removingTheRuleDuringTheDelayCancelsTheDislikeAndTheSkip() {
+        val t = FakeTarget(dislikeId = dislikeId)
+        guardedFeed(t, "Summer Mix 2024")
+        latestSettings = AppSettings(keywords = emptyList(), dislikeRules = setOf("keyword:Mix"))
+        runDelayed()
+        assertTrue(t.calls.isEmpty())
+    }
+
+    @Test
+    fun uncheckingTheDislikeOptionDuringTheDelayStillSkipsButDoesNotDislike() {
+        val t = FakeTarget(dislikeId = dislikeId)
+        guardedFeed(t, "Summer Mix 2024")
+        latestSettings = AppSettings(dislikeRules = emptySet())
+        runDelayed()
+        assertEquals(listOf("skip"), t.calls)
+        assertFalse(events.single().disliked)
+    }
+
+    @Test
+    fun removingThePlayerDuringTheDelayCancelsEverything() {
+        val t = FakeTarget(dislikeId = dislikeId)
+        guardedFeed(t, "Summer Mix 2024")
+        latestSettings = AppSettings(monitoredPackages = emptyList(), dislikeRules = setOf("keyword:Mix"))
+        runDelayed()
+        assertTrue(t.calls.isEmpty())
+    }
+
+    @Test
+    fun aTrackAlreadyDislikedOrWithoutPublishedRatingIsSkippedAtOnce() {
+        for (rating in listOf(RatingState.DISLIKED, RatingState.UNKNOWN)) {
+            delayed.clear()
+            val t = FakeTarget(dislikeId = dislikeId, rating = rating)
+            delayedFeed(t, "Summer Mix 2024 $rating")
+            assertEquals(listOf("skip"), t.calls, "rating=$rating")
+            assertTrue(delayed.isEmpty(), "rating=$rating")
+        }
+    }
 }

@@ -64,4 +64,17 @@ class DislikeSupportTest {
         assertFalse(RatingState.DISLIKED.allowsDislike)
         assertFalse(RatingState.UNKNOWN.allowsDislike)
     }
+
+    @Test
+    fun theKnownIdWinsOverOtherDislikeLikeIds() {
+        val actions = listOf(CustomActionInfo("dislike_something", "x"), CustomActionInfo("THUMBS_DOWN_ACTION", "Dislike"))
+        assertEquals("THUMBS_DOWN_ACTION", DislikeSupport.findActionId(actions))
+    }
+
+    @Test
+    fun undoStyleIdsAreNeverTheDislikeAction() {
+        for (id in listOf("remove_dislike", "undislike", "undo_thumbs_down", "clear_dislike", "cancel_dislike", "dislike_unset")) {
+            assertNull(DislikeSupport.findActionId(listOf(CustomActionInfo(id, "x"))), id)
+        }
+    }
 }

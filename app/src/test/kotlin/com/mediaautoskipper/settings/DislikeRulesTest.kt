@@ -35,4 +35,18 @@ class DislikeRulesTest {
         val result = DislikeRules.reconcile(setOf("keyword:Mix"), RuleKind.KEYWORD, listOf("Mix"), listOf("Mix", "DJ"))
         assertEquals(setOf("keyword:Mix"), result)
     }
+
+    @Test
+    fun reorderingKeepsEveryFlag() {
+        val flags = setOf("keyword:A", "keyword:B")
+        val result = DislikeRules.reconcile(flags, RuleKind.KEYWORD, listOf("A", "B", "C"), listOf("B", "C", "A"))
+        assertEquals(flags, result)
+    }
+
+    @Test
+    fun severalEditsAtOnceKeepFlagsOfEntriesThatStayAndDropTheRest() {
+        val flags = setOf("keyword:A", "keyword:B")
+        val result = DislikeRules.reconcile(flags, RuleKind.KEYWORD, listOf("A", "B", "C"), listOf("A", "X", "Y"))
+        assertEquals(setOf("keyword:A"), result)
+    }
 }

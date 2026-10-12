@@ -19,19 +19,18 @@ object DislikeRules {
     }
 
     /**
-     * Carries flags across a rule list edit. When the size is unchanged, an entry whose text changed
-     * is an edit: its flag moves to the new text. Otherwise entries that disappeared lose their flag.
-     * Newly added entries start unflagged.
+     * Carries flags across a rule list edit. When exactly one entry's text changed (same size), that is an
+     * edit: its flag moves to the new text. Any other change (entries added, removed, reordered or several
+     * edited at once) keeps the flags of entries that are still present and drops those of entries that
+     * disappeared. Newly added entries start unflagged.
      */
     fun reconcile(flags: Set<String>, kind: RuleKind, old: List<String>, new: List<String>): Set<String> {
-        val result = flags.toMutableSet()
-        if (old.size == new.size) {
-            old.indices.forEach { i ->
-                if (old[i] != new[i] && result.remove(key(kind, old[i]))) result.add(key(kind, new[i]))
-            }
-        } else {
-            old.filter { it !in new }.forEach { result.remove(key(kind, it)) }
+        val changed = if (old.size == new.size) old.indices.filter { old[it] != new[it] } else emptyList()
+        if (changed.size == 1 && old.toSet().size == old.size && new.none { it == old[changed[0]] }) {
+            val i = changed[0]
+            val oldKey = key(kind, old[i])
+            return if (oldKey in flags) flags - oldKey + key(kind, new[i]) else flags
         }
-        return result
+        return flags - old.filter { it !in new }.map { key(kind, it) }.toSet()
     }
 }

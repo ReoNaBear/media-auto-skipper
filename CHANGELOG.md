@@ -1,5 +1,12 @@
 # Changelog / 更新紀錄
 
+## 0.2.2 (2026-10-12)
+
+- Fix: turning the master switch off, removing the rule or removing the player during the roughly 2 second wait of a "dislike" rule now cancels the pending dislike and skip. Before, the dislike could still be sent after you turned the app off, and it cannot be undone. / 修正：勾選「不喜歡」的規則在約 2 秒等待期間，若你關閉總開關、刪除規則或移除播放器，現在會取消待送的不喜歡與跳過。之前關閉後仍可能送出，而且無法復原。
+- Fix: no wait when the track is already disliked or the player publishes no rating. / 修正：曲目已是不喜歡、或播放器沒有公開評分時，不再白等。
+- Fix: actions such as `remove_dislike` or `undislike` are never mistaken for the dislike action, and the known `thumbs_down_action` is preferred. / 修正：`remove_dislike`、`undislike` 這類動作不會被誤認成不喜歡動作，並優先使用已知的 `thumbs_down_action`。
+- Fix: reordering or editing several rules at once no longer loses their dislike options. / 修正：一次調整多條規則的順序或內容，不會再遺失它們的不喜歡選項。
+
 ## 0.2.1 (2026-10-12)
 
 - Fix: a rule marked "also mark as dislike" on a player that has no dislike action (the YouTube video app) now skips at once instead of waiting about 2 seconds first. The first second or so of a video can still play, because the YouTube app publishes a video's title only after it has started loading; the app cannot read the next video in advance. / 修正：在沒有公開不喜歡動作的播放器（YouTube 影片版）上，勾選了「同時標為不喜歡」的規則現在會立刻跳過，不再先等約 2 秒。影片開頭仍可能播放約一秒，因為 YouTube 要在影片開始載入後才公布標題，本 App 無法提前讀到下一支影片。
