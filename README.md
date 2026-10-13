@@ -91,6 +91,18 @@ Create `local.properties` with `sdk.dir=<path to your Android SDK>` (use forward
 
 `fake-player/` is a development-only app with a tiny playlist and a MediaSession. It uses Spotify's package name so the default monitored list applies; uninstall it before installing the real Spotify. A debug build also answers `adb shell am broadcast -a com.mediaautoskipper.PROBE -p com.mediaautoskipper`, which logs each active session's queue, metadata and playback state (tag `MasProbe`).
 
+## Tested players
+
+| Player | Result |
+| --- | --- |
+| YouTube Music | Works: skipping, and the optional dislike through the player's own action (emulator and Sharp R11) |
+| YouTube (video app) | Works: skipping, and the optional dislike through the official rating call, which is slower (emulator and Sharp R11) |
+| KKBOX | Skipping reported working by the author on a Sharp R11; dislike not tested |
+| Spotify | **Not verified** with the real app; only checked with the fake player |
+| MixerBox | **Does not work.** It shows its tracks to other apps but ignores the "next" command they send; it only reacts to media-button key events, which this app does not send |
+
+Other media apps can be added from the Rules tab. They work only if they publish a standard media session with a title and answer the "next" command, and there is no guarantee. If you try one, an issue with the result is welcome.
+
 ## Verification status
 
 | Area | Status |
@@ -99,9 +111,9 @@ Create `local.properties` with `sdk.dir=<path to your Android SDK>` (use forward
 | Service on an emulator with the fake player (permission, switch off/on, skipping, probe dump) | Checked by hand |
 | Language switch applied immediately and kept after restart | Checked by hand on an emulator |
 | Real YouTube Music: metadata read and a real skip via a keyword (service-side 4 ms) | Checked by hand on an emulator |
-| Switch resets to off after reboot | Checked on an emulator (not on a physical phone) |
+| Switch resets to off after reboot | Checked on an emulator, and reported working on the Sharp R11 |
 | Skipping with the screen off, on real YouTube Music (emulator) | Checked by hand; next track was playing about 0.1 s after the skip |
-| Physical phone (Sharp R11, Android 16): YouTube and YouTube Music, including skipping with the screen off | Reported working by the author; reboot reset not recorded on it |
+| Physical phone (Sharp R11, Android 16): YouTube and YouTube Music, including skipping with the screen off | Reported working by the author |
 | Android Auto (real car or Desktop Head Unit), real Spotify | **Not yet verified** |
 | Readable queue (for pre-skipping): YouTube Music yes (25 items); YouTube no | Checked, see `docs/queue-probe-notes.md`; Spotify unknown |
 
@@ -209,6 +221,18 @@ Media Auto-Skipper is an independent project. It is not affiliated with, endorse
 
 `fake-player/` 是僅供開發的小 App，內含一份簡短播放清單與一個 MediaSession。它借用 Spotify 的套件名稱，所以預設監聽清單即適用；安裝真正的 Spotify 前請先解除安裝它。除錯版另外支援 `adb shell am broadcast -a com.mediaautoskipper.PROBE -p com.mediaautoskipper`，會把每個工作階段的佇列、曲目資訊（metadata）、播放狀態印到 log（標籤 `MasProbe`）。
 
+## 已測試的播放器
+
+| 播放器 | 結果 |
+| --- | --- |
+| YouTube Music | 可用：跳歌，以及選用的「不喜歡」（走播放器自己的動作）（模擬器與 Sharp R11） |
+| YouTube（影片版） | 可用：跳歌，以及選用的「不喜歡」（走官方評分呼叫，比較慢）（模擬器與 Sharp R11） |
+| KKBOX | 作者在 Sharp R11 上回報跳歌正常；「不喜歡」未測試 |
+| Spotify | **尚未用真實 App 驗證**，只用假播放器測過 |
+| MixerBox | **不可用。** 它會把曲目資訊給其他 App 看，但忽略它們送出的「下一首」指令；它只回應媒體按鍵事件，而本 App 不會送這種事件 |
+
+其他媒體 App 可以在「規則」分頁加入。只有當它們公布標準的媒體工作階段、有標題，並且會回應「下一首」指令時才有效，也不保證一定可用。如果你試過其他 App，歡迎開 issue 回報結果。
+
 ## 驗證狀態
 
 | 項目 | 狀態 |
@@ -217,9 +241,9 @@ Media Auto-Skipper is an independent project. It is not affiliated with, endorse
 | 服務在模擬器搭配假播放器（授權、開關關/開、跳歌、探測傾印） | 已手動確認 |
 | 語言切換立即生效、重啟後保留 | 已在模擬器手動確認 |
 | 真實 YouTube Music：讀到 metadata，並以關鍵字實際跳歌（App 從收到曲目資訊到送出跳歌指令只花 4 毫秒，不含播放器本身的延遲） | 已在模擬器手動確認 |
-| 重新開機後開關回到關閉 | 已在模擬器確認（尚未在實體手機確認） |
+| 重新開機後開關回到關閉 | 已在模擬器確認，Sharp R11 上作者回報正常 |
 | 螢幕關閉時在真實 YouTube Music 跳歌（模擬器） | 已手動確認；跳歌後約 0.1 秒，下一首的資訊就送出來了 |
-| 實體手機（Sharp R11、Android 16）：YouTube 與 YouTube Music，包含螢幕關閉時跳歌 | 作者回報運作正常；重開機重置尚未在這支手機上記錄 |
+| 實體手機（Sharp R11、Android 16）：YouTube 與 YouTube Music，包含螢幕關閉時跳歌 | 作者回報運作正常 |
 | Android Auto（實車或 Desktop Head Unit）、真實 Spotify | **尚未驗證** |
 | 可讀的播放佇列（供提前跳過用）：YouTube Music 可（25 首）；YouTube 不可 | 已確認，見 `docs/queue-probe-notes.md`；Spotify 未知 |
 
