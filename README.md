@@ -15,7 +15,7 @@
 
 An open-source Android app that **skips tracks you do not want to hear**. It never plays music itself. It watches the media sessions of your players (YouTube Music, YouTube, Spotify, ...) and presses "next" when the title or artist matches your rules, such as Simplified Chinese titles, "Full Album" compilations, or your own keywords and regular expressions.
 
-> Status: version 0.2.0 (first public release). Verified on an emulator and on a Sharp R11 phone with Android 16 (YouTube and YouTube Music); real-car Android Auto and real Spotify are **not verified yet**. See [Verification status](#verification-status).
+> Status: version 0.2.0 (first public release). Verified on an emulator and on a Sharp R11 phone with Android 16 (YouTube, YouTube Music, Spotify and KKBOX); real-car Android Auto is **not verified yet**. See [Verification status](#verification-status).
 
 > **Works offline by design.** The app declares no internet permission, so it cannot send anything off your phone. Settings and skip history stay on the device. You can check this in `app/src/main/AndroidManifest.xml`.
 
@@ -93,15 +93,15 @@ Create `local.properties` with `sdk.dir=<path to your Android SDK>` (use forward
 
 ## Tested players
 
-| Player | Result |
-| --- | --- |
-| YouTube Music | Works: skipping, and the optional dislike through the player's own action (emulator and Sharp R11) |
-| YouTube (video app) | Works: skipping, and the optional dislike through the official rating call, which is slower (emulator and Sharp R11) |
-| KKBOX | Skipping reported working by the author on a Sharp R11; dislike not tested |
-| Spotify | **Not verified** with the real app; only checked with the fake player |
-| MixerBox | **Does not work.** It shows its tracks to other apps but ignores the "next" command they send; it only reacts to media-button key events, which this app does not send |
+| Player | Skip | Dislike |
+| --- | :---: | :---: |
+| YouTube Music | ✅ | ✅ |
+| YouTube (video app) | ✅ | ✅ |
+| Spotify | ✅ | – |
+| KKBOX | ✅ | – (the app has no dislike button) |
+| MixerBox | ❌ (ignores the "next" command from other apps) | ❌ |
 
-Other media apps can be added from the Rules tab. They work only if they publish a standard media session with a title and answer the "next" command, and there is no guarantee. If you try one, an issue with the result is welcome.
+✅ works, ❌ does not work, – not available or not tested. Other media apps can be added from the Rules tab, with no guarantee; an issue with your result is welcome.
 
 ## Verification status
 
@@ -114,7 +114,7 @@ Other media apps can be added from the Rules tab. They work only if they publish
 | Switch resets to off after reboot | Checked on an emulator, and reported working on the Sharp R11 |
 | Skipping with the screen off, on real YouTube Music (emulator) | Checked by hand; next track was playing about 0.1 s after the skip |
 | Physical phone (Sharp R11, Android 16): YouTube and YouTube Music, including skipping with the screen off | Reported working by the author |
-| Android Auto (real car or Desktop Head Unit), real Spotify | **Not yet verified** |
+| Android Auto (real car or Desktop Head Unit) | **Not yet verified** |
 | Readable queue (for pre-skipping): YouTube Music yes (25 items); YouTube no | Checked, see `docs/queue-probe-notes.md`; Spotify unknown |
 
 ## Project layout
@@ -145,7 +145,7 @@ Media Auto-Skipper is an independent project. It is not affiliated with, endorse
 
 這是一個開源的 Android App，**自動跳過你不想聽的曲目**。它自己不播放音樂，只監聽播放器（YouTube Music、YouTube、Spotify 等）的媒體工作階段，當標題或藝人符合你的規則（例如簡體中文標題、「Full Album」合輯，或你自訂的關鍵字與正規表達式）時，替你按下「下一首」。
 
-> 目前狀態：版本 0.2.0（首次公開版本）。已在模擬器與 Android 16 的 Sharp R11 手機上驗證（YouTube 與 YouTube Music）；實車 Android Auto 與真實 Spotify **尚未驗證**。詳見[驗證狀態](#驗證狀態)。
+> 目前狀態：版本 0.2.0（首次公開版本）。已在模擬器與 Android 16 的 Sharp R11 手機上驗證（YouTube、YouTube Music、Spotify 與 KKBOX）；實車 Android Auto **尚未驗證**。詳見[驗證狀態](#驗證狀態)。
 
 > **設計上完全離線。** App 沒有宣告網路權限，不可能把任何資料傳出手機；設定與跳過紀錄都只存在手機裡。你可以在 `app/src/main/AndroidManifest.xml` 自行檢查。
 
@@ -223,15 +223,15 @@ Media Auto-Skipper is an independent project. It is not affiliated with, endorse
 
 ## 已測試的播放器
 
-| 播放器 | 結果 |
-| --- | --- |
-| YouTube Music | 可用：跳歌，以及選用的「不喜歡」（走播放器自己的動作）（模擬器與 Sharp R11） |
-| YouTube（影片版） | 可用：跳歌，以及選用的「不喜歡」（走官方評分呼叫，比較慢）（模擬器與 Sharp R11） |
-| KKBOX | 作者在 Sharp R11 上回報跳歌正常；「不喜歡」未測試 |
-| Spotify | **尚未用真實 App 驗證**，只用假播放器測過 |
-| MixerBox | **不可用。** 它會把曲目資訊給其他 App 看，但忽略它們送出的「下一首」指令；它只回應媒體按鍵事件，而本 App 不會送這種事件 |
+| 播放器 | 跳過 | 不喜歡 |
+| --- | :---: | :---: |
+| YouTube Music | ✅ | ✅ |
+| YouTube（影片版） | ✅ | ✅ |
+| Spotify | ✅ | – |
+| KKBOX | ✅ | –（App 本身沒有不喜歡按鈕） |
+| MixerBox | ❌（不理會其他 App 送的「下一首」指令） | ❌ |
 
-其他媒體 App 可以在「規則」分頁加入。只有當它們公布標準的媒體工作階段、有標題，並且會回應「下一首」指令時才有效，也不保證一定可用。如果你試過其他 App，歡迎開 issue 回報結果。
+✅ 可用，❌ 不可用，– 沒有此功能或未測試。其他媒體 App 可在「規則」分頁加入，不保證可用；歡迎開 issue 回報結果。
 
 ## 驗證狀態
 
@@ -244,7 +244,7 @@ Media Auto-Skipper is an independent project. It is not affiliated with, endorse
 | 重新開機後開關回到關閉 | 已在模擬器確認，Sharp R11 上作者回報正常 |
 | 螢幕關閉時在真實 YouTube Music 跳歌（模擬器） | 已手動確認；跳歌後約 0.1 秒，下一首的資訊就送出來了 |
 | 實體手機（Sharp R11、Android 16）：YouTube 與 YouTube Music，包含螢幕關閉時跳歌 | 作者回報運作正常 |
-| Android Auto（實車或 Desktop Head Unit）、真實 Spotify | **尚未驗證** |
+| Android Auto（實車或 Desktop Head Unit） | **尚未驗證** |
 | 可讀的播放佇列（供提前跳過用）：YouTube Music 可（25 首）；YouTube 不可 | 已確認，見 `docs/queue-probe-notes.md`；Spotify 未知 |
 
 ## 專案結構
