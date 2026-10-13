@@ -14,7 +14,7 @@
 
     <string name="rules_keywords_title">キーワード</string>
     <string name="rules_regex_title">正規表現</string>
-    <string name="rules_keyword_hint">キーワードを追加(言語は問いません)</string>
+    <string name="rules_keyword_hint">キーワードを追加（言語は問いません）</string>
     <string name="rules_regex_hint">正規表現を追加</string>
     <string name="action_add">追加</string>
     <string name="action_save">保存</string>
@@ -22,7 +22,7 @@
     <string name="action_delete">削除</string>
     <string name="error_blank">先に内容を入力してください。</string>
     <string name="error_duplicate">この項目はすでに登録されています。</string>
-    <string name="error_invalid_regex">無効な正規表現です: %1$s</string>
+    <string name="error_invalid_regex">無効な正規表現です：%1$s</string>
 
     <string name="rule_simplified">簡体字中国語のタイトルをスキップ</string>
     <string name="players_title">監視するプレーヤー</string>
@@ -31,7 +31,7 @@
 
     <string name="history_clear">履歴を消去</string>
     <string name="history_empty">スキップした曲はまだありません。</string>
-    <string name="history_clear_title">履歴を消去しますか?</string>
+    <string name="history_clear_title">履歴を消去しますか？</string>
     <string name="history_clear_body">この端末のスキップ履歴がすべて削除されます。</string>
     <string name="history_clear_confirm">消去</string>
     <string name="action_cancel">キャンセル</string>
@@ -55,4 +55,9 @@
     <string name="rules_section_detection">検出</string>
     <string name="dislike_warning_title">低評価オプションについて</string>
     <string name="history_empty_hint">スキップした曲がここに表示されます。</string>
+
+    <string name="a11y_edit_item">%1$s を編集</string>
+    <string name="a11y_delete_item">%1$s を削除</string>
+    <string name="a11y_remove_player">%1$s を監視対象から外す</string>
+    <string name="a11y_add_player">%1$s を追加</string>
 </resources>

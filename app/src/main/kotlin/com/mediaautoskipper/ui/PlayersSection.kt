@@ -19,6 +19,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.mediaautoskipper.R
@@ -113,7 +115,11 @@ fun RuleTogglesAndPlayers(
             monitored.forEach { p ->
                 Row(Modifier.fillMaxWidth().defaultMinSize(minHeight = Dimens.touchTarget), verticalAlignment = Alignment.CenterVertically) {
                     Text(p.label, Modifier.weight(1f), style = MaterialTheme.typography.bodyLarge)
-                    TextButton(onClick = { onRemove(p.pkg) }) { Text(stringResource(R.string.action_remove)) }
+                    val removeLabel = stringResource(R.string.a11y_remove_player, p.label)
+                    TextButton(
+                        onClick = { onRemove(p.pkg) },
+                        modifier = Modifier.semantics { contentDescription = removeLabel },
+                    ) { Text(stringResource(R.string.action_remove)) }
                 }
             }
 
@@ -128,7 +134,11 @@ fun RuleTogglesAndPlayers(
                 addable.forEach { p ->
                     Row(Modifier.fillMaxWidth().defaultMinSize(minHeight = Dimens.touchTarget), verticalAlignment = Alignment.CenterVertically) {
                         Text(p.label, Modifier.weight(1f), style = MaterialTheme.typography.bodyLarge)
-                        TextButton(onClick = { onAdd(p.pkg) }) { Text(stringResource(R.string.action_add)) }
+                        val addLabel = stringResource(R.string.a11y_add_player, p.label)
+                        TextButton(
+                            onClick = { onAdd(p.pkg) },
+                            modifier = Modifier.semantics { contentDescription = addLabel },
+                        ) { Text(stringResource(R.string.action_add)) }
                     }
                 }
             }

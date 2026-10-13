@@ -57,4 +57,9 @@
     <string name="rules_section_detection">Detection</string>
     <string name="dislike_warning_title">About the dislike option</string>
     <string name="history_empty_hint">Skipped tracks will appear here.</string>
+
+    <string name="a11y_edit_item">Edit %1$s</string>
+    <string name="a11y_delete_item">Delete %1$s</string>
+    <string name="a11y_remove_player">Remove %1$s</string>
+    <string name="a11y_add_player">Add %1$s</string>
 </resources>

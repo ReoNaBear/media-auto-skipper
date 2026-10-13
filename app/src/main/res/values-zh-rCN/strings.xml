@@ -55,4 +55,9 @@
     <string name="rules_section_detection">检测</string>
     <string name="dislike_warning_title">关于“不喜欢”选项</string>
     <string name="history_empty_hint">跳过的曲目会显示在这里。</string>
+
+    <string name="a11y_edit_item">编辑 %1$s</string>
+    <string name="a11y_delete_item">删除 %1$s</string>
+    <string name="a11y_remove_player">移除 %1$s</string>
+    <string name="a11y_add_player">添加 %1$s</string>
 </resources>

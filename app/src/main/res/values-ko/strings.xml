@@ -25,7 +25,7 @@
     <string name="error_invalid_regex">잘못된 정규식입니다: %1$s</string>
 
     <string name="rule_simplified">중국어 간체 제목 건너뛰기</string>
-    <string name="players_title">감시할 플레이어</string>
+    <string name="players_title">대상 플레이어</string>
     <string name="players_add_title">설치된 미디어 앱에서 추가</string>
     <string name="action_remove">제거</string>
 
@@ -47,7 +47,7 @@
     <string name="action_open_battery_settings">배터리 설정 열기</string>
 
     <string name="dislike_option">싫어요로도 표시</string>
-    <string name="dislike_note">표시한 규칙에 일치하면 건너뛰기 전에 플레이어에 ‘싫어요’를 보냅니다. 계정에 기록되어 추천에 영향을 주며, 이 앱에서는 취소할 수 없습니다. 또한 건너뛰기가 느려지고 덜 안정적이 됩니다. 앱이 먼저 약 1.5~2초 기다리고, 일부 플레이어는 스스로 다음 곡으로 넘어가거나 건너뛰기를 무시합니다.</string>
+    <string name="dislike_note">표시한 규칙에 일치하면 건너뛰기 전에 플레이어에 ‘싫어요’를 보냅니다. 계정에 기록되어 추천에 영향을 주며, 이 앱에서는 취소할 수 없습니다. 또한 건너뛰기가 느려지고 덜 안정적으로 동작합니다. 앱이 먼저 약 1.5~2초 기다리고, 일부 플레이어는 스스로 다음 곡으로 넘어가거나 건너뛰기를 무시합니다.</string>
     <string name="history_disliked">싫어요 보냄</string>
     <string name="home_tagline">듣고 싶지 않은 곡을 건너뜁니다</string>
     <string name="status_on">건너뛰기 켜짐</string>
@@ -55,4 +55,9 @@
     <string name="rules_section_detection">감지</string>
     <string name="dislike_warning_title">싫어요 옵션 안내</string>
     <string name="history_empty_hint">건너뛴 곡이 여기에 표시됩니다.</string>
+
+    <string name="a11y_edit_item">%1$s 편집</string>
+    <string name="a11y_delete_item">%1$s 삭제</string>
+    <string name="a11y_remove_player">%1$s 제거</string>
+    <string name="a11y_add_player">%1$s 추가</string>
 </resources>

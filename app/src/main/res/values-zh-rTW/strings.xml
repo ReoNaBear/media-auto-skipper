@@ -55,4 +55,9 @@
     <string name="rules_section_detection">偵測</string>
     <string name="dislike_warning_title">關於「不喜歡」選項</string>
     <string name="history_empty_hint">跳過的曲目會顯示在這裡。</string>
+
+    <string name="a11y_edit_item">編輯 %1$s</string>
+    <string name="a11y_delete_item">刪除 %1$s</string>
+    <string name="a11y_remove_player">移除 %1$s</string>
+    <string name="a11y_add_player">新增 %1$s</string>
 </resources>

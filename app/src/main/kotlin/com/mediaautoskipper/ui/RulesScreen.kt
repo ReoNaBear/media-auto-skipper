@@ -23,7 +23,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.liveRegion
+import androidx.compose.ui.semantics.semantics
 import com.mediaautoskipper.R
 import com.mediaautoskipper.settings.DislikeRules
 import com.mediaautoskipper.settings.EditResult
@@ -64,18 +68,27 @@ fun RuleSection(
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Text(item, Modifier.weight(1f), style = MaterialTheme.typography.bodyLarge)
-                    TextButton(onClick = {
-                        editing = index
-                        input = item
-                        error = null
-                    }) { Text(stringResource(R.string.action_edit)) }
-                    TextButton(onClick = {
-                        onChange(RuleEdits.remove(items, index))
-                        if (editing == index) {
-                            editing = null
-                            input = ""
-                        }
-                    }) { Text(stringResource(R.string.action_delete)) }
+                    // The same word on every row, so TalkBack gets the rule's own text as well.
+                    val editLabel = stringResource(R.string.a11y_edit_item, item)
+                    val deleteLabel = stringResource(R.string.a11y_delete_item, item)
+                    TextButton(
+                        onClick = {
+                            editing = index
+                            input = item
+                            error = null
+                        },
+                        modifier = Modifier.semantics { contentDescription = editLabel },
+                    ) { Text(stringResource(R.string.action_edit)) }
+                    TextButton(
+                        onClick = {
+                            onChange(RuleEdits.remove(items, index))
+                            if (editing == index) {
+                                editing = null
+                                input = ""
+                            }
+                        },
+                        modifier = Modifier.semantics { contentDescription = deleteLabel },
+                    ) { Text(stringResource(R.string.action_delete)) }
                 }
                 if (onDislikeChange != null) {
                     val key = DislikeRules.key(kind, item)
@@ -99,7 +112,15 @@ fun RuleSection(
             isError = error != null,
             modifier = Modifier.fillMaxWidth().testTag(RuleTags.input(kind)),
         )
-        error?.let { Text(errorText(it), color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall) }
+        error?.let {
+            // A polite live region makes TalkBack read the error when it appears.
+            Text(
+                errorText(it),
+                Modifier.semantics { liveRegion = LiveRegionMode.Polite },
+                color = MaterialTheme.colorScheme.error,
+                style = MaterialTheme.typography.bodySmall,
+            )
+        }
 
         Button(
             onClick = {
