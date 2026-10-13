@@ -109,10 +109,10 @@ Create `local.properties` with `sdk.dir=<path to your Android SDK>` (use forward
 | --- | --- |
 | Filter engine, settings, switch logic, skip logic, history, UI, translations | Unit and UI tests pass; `lintDebug` has no missing translations |
 | Service on an emulator with the fake player (permission, switch off/on, skipping, probe dump) | Checked by hand |
-| Language switch applied immediately and kept after restart | Checked by hand on an emulator |
-| Real YouTube Music: metadata read and a real skip via a keyword (service-side 4 ms) | Checked by hand on an emulator |
-| Switch resets to off after reboot | Checked on an emulator, and reported working on the Sharp R11 |
-| Skipping with the screen off, on real YouTube Music (emulator) | Checked by hand; next track was playing about 0.1 s after the skip |
+| Language switch applied immediately and kept after restart | Checked by hand on an emulator and on the Sharp R11 |
+| Real YouTube Music: metadata read and a real skip via a keyword (service-side 4 ms) | Checked by hand on an emulator and on the Sharp R11 |
+| Switch resets to off after reboot | Checked on an emulator and on the Sharp R11 |
+| Skipping with the screen off, on real YouTube Music | Checked by hand on an emulator (next track playing about 0.1 s after the skip) and on the Sharp R11 |
 | Physical phone (Sharp R11, Android 16): YouTube and YouTube Music, including skipping with the screen off | Reported working by the author |
 | Android Auto (real car or Desktop Head Unit) | **Not yet verified** |
 | Readable queue (for pre-skipping): YouTube Music yes (25 items); YouTube no | Checked, see `docs/queue-probe-notes.md`; Spotify unknown |
@@ -239,10 +239,10 @@ Media Auto-Skipper is an independent project. It is not affiliated with, endorse
 | --- | --- |
 | 過濾引擎、設定、開關邏輯、跳歌邏輯、紀錄、介面、翻譯 | 單元與 UI 測試通過；`lintDebug` 無缺少翻譯 |
 | 服務在模擬器搭配假播放器（授權、開關關/開、跳歌、探測傾印） | 已手動確認 |
-| 語言切換立即生效、重啟後保留 | 已在模擬器手動確認 |
-| 真實 YouTube Music：讀到 metadata，並以關鍵字實際跳歌（App 從收到曲目資訊到送出跳歌指令只花 4 毫秒，不含播放器本身的延遲） | 已在模擬器手動確認 |
-| 重新開機後開關回到關閉 | 已在模擬器確認，Sharp R11 上作者回報正常 |
-| 螢幕關閉時在真實 YouTube Music 跳歌（模擬器） | 已手動確認；跳歌後約 0.1 秒，下一首的資訊就送出來了 |
+| 語言切換立即生效、重啟後保留 | 已在模擬器與 Sharp R11 手動確認 |
+| 真實 YouTube Music：讀到 metadata，並以關鍵字實際跳歌（App 從收到曲目資訊到送出跳歌指令只花 4 毫秒，不含播放器本身的延遲） | 已在模擬器與 Sharp R11 手動確認 |
+| 重新開機後開關回到關閉 | 已在模擬器與 Sharp R11 確認 |
+| 螢幕關閉時在真實 YouTube Music 跳歌 | 已在模擬器（跳歌後約 0.1 秒，下一首的資訊就送出來了）與 Sharp R11 手動確認 |
 | 實體手機（Sharp R11、Android 16）：YouTube 與 YouTube Music，包含螢幕關閉時跳歌 | 作者回報運作正常 |
 | Android Auto（實車或 Desktop Head Unit） | **尚未驗證** |
 | 可讀的播放佇列（供提前跳過用）：YouTube Music 可（25 首）；YouTube 不可 | 已確認，見 `docs/queue-probe-notes.md`；Spotify 未知 |
