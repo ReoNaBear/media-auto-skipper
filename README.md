@@ -15,7 +15,7 @@
 
 An open-source Android app that **skips tracks you do not want to hear**. It never plays music itself. It watches the media sessions of your players (YouTube Music, YouTube, Spotify, ...) and presses "next" when the title or artist matches your rules, such as Simplified Chinese titles, "Full Album" compilations, or your own keywords and regular expressions.
 
-> Status: version 0.2.0 (first public release). Verified on an emulator and on a Sharp R11 phone with Android 16 (YouTube, YouTube Music, Spotify and KKBOX); real-car Android Auto is **not verified yet**. See [Verification status](#verification-status).
+> Status: version 0.2.1. Verified on an emulator and on a Sharp R11 phone with Android 16 (YouTube, YouTube Music, Spotify and KKBOX); real-car Android Auto is **not verified yet**. See [Verification status](#verification-status).
 
 > **Works offline by design.** The app declares no internet permission, so it cannot send anything off your phone. Settings and skip history stay on the device. You can check this in `app/src/main/AndroidManifest.xml`.
 
@@ -27,13 +27,13 @@ An open-source Android app that **skips tracks you do not want to hear**. It nev
 
 ## Download
 
-**Version 0.2.0 (first public release)**
+**Version 0.2.1**
 
-1. Open the [Releases page](https://github.com/ReoNaBear/media-auto-skipper/releases/latest) and download `media-auto-skipper-v0.2.0.apk`.
+1. Open the [Releases page](https://github.com/ReoNaBear/media-auto-skipper/releases/latest) and download `media-auto-skipper-v0.2.1.apk`.
 2. On your Android phone, open the file and allow "Install unknown apps" for your browser or file manager when asked.
 3. Follow [Use](#use) below.
 
-Requires Android 8.0 (API 26) or newer (tested on an API 37 emulator and an Android 16 phone so far). This is a debug-signed build for early testers; it is not on Google Play. See the [changelog](CHANGELOG.md) and [what is still unverified](#verification-status).
+Requires Android 8.0 (API 26) or newer (tested on an API 37 emulator and an Android 16 phone so far). It is signed with the author's own release key and is not on Google Play. If you installed an older debug-signed test build, uninstall it first. See the [changelog](CHANGELOG.md) and [what is still unverified](#verification-status).
 
 Want to build it yourself or contribute? See [CONTRIBUTING.md](CONTRIBUTING.md).
 
@@ -98,7 +98,7 @@ Create `local.properties` with `sdk.dir=<path to your Android SDK>` (use forward
 | YouTube Music | ✅ | ✅ |
 | YouTube (video app) | ✅ | ✅ |
 | Spotify | ✅ | – |
-| KKBOX | ✅ | – (the app has no dislike button) |
+| KKBOX | ✅ | – |
 | MixerBox | ❌ (ignores the "next" command from other apps) | ❌ |
 
 ✅ works, ❌ does not work, – not available or not tested. Other media apps can be added from the Rules tab, with no guarantee; an issue with your result is welcome.
@@ -145,7 +145,7 @@ Media Auto-Skipper is an independent project. It is not affiliated with, endorse
 
 這是一個開源的 Android App，**自動跳過你不想聽的曲目**。它自己不播放音樂，只監聽播放器（YouTube Music、YouTube、Spotify 等）的媒體工作階段，當標題或藝人符合你的規則（例如簡體中文標題、「Full Album」合輯，或你自訂的關鍵字與正規表達式）時，替你按下「下一首」。
 
-> 目前狀態：版本 0.2.0（首次公開版本）。已在模擬器與 Android 16 的 Sharp R11 手機上驗證（YouTube、YouTube Music、Spotify 與 KKBOX）；實車 Android Auto **尚未驗證**。詳見[驗證狀態](#驗證狀態)。
+> 目前狀態：版本 0.2.1。已在模擬器與 Android 16 的 Sharp R11 手機上驗證（YouTube、YouTube Music、Spotify 與 KKBOX）；實車 Android Auto **尚未驗證**。詳見[驗證狀態](#驗證狀態)。
 
 > **設計上完全離線。** App 沒有宣告網路權限，不可能把任何資料傳出手機；設定與跳過紀錄都只存在手機裡。你可以在 `app/src/main/AndroidManifest.xml` 自行檢查。
 
@@ -157,13 +157,13 @@ Media Auto-Skipper is an independent project. It is not affiliated with, endorse
 
 ## 下載
 
-**版本 0.2.0（首次公開版本）**
+**版本 0.2.1**
 
-1. 開啟 [Releases 頁面](https://github.com/ReoNaBear/media-auto-skipper/releases/latest)，下載 `media-auto-skipper-v0.2.0.apk`。
+1. 開啟 [Releases 頁面](https://github.com/ReoNaBear/media-auto-skipper/releases/latest)，下載 `media-auto-skipper-v0.2.1.apk`。
 2. 在手機上點開這個檔案。系統詢問時，允許瀏覽器或檔案管理員「安裝不明應用程式」。
 3. 接著照下方[使用方式](#使用方式)操作。
 
-需要 Android 8.0（API 26）以上（目前在 API 37 模擬器與 Android 16 手機上測過）。這是給早期測試者的除錯簽章版本，尚未上架 Google Play。更新內容見[更新紀錄](CHANGELOG.md)，尚未驗證的項目見[驗證狀態](#驗證狀態)。
+需要 Android 8.0（API 26）以上（目前在 API 37 模擬器與 Android 16 手機上測過）。APK 以作者自己的發行金鑰簽署，尚未上架 Google Play。如果你裝過舊的除錯簽章測試版，請先解除安裝。更新內容見[更新紀錄](CHANGELOG.md)，尚未驗證的項目見[驗證狀態](#驗證狀態)。
 
 想自己建置或參與開發？請看 [CONTRIBUTING.md](CONTRIBUTING.md)。
 
@@ -228,7 +228,7 @@ Media Auto-Skipper is an independent project. It is not affiliated with, endorse
 | YouTube Music | ✅ | ✅ |
 | YouTube（影片版） | ✅ | ✅ |
 | Spotify | ✅ | – |
-| KKBOX | ✅ | –（App 本身沒有不喜歡按鈕） |
+| KKBOX | ✅ | – |
 | MixerBox | ❌（不理會其他 App 送的「下一首」指令） | ❌ |
 
 ✅ 可用，❌ 不可用，– 沒有此功能或未測試。其他媒體 App 可在「規則」分頁加入，不保證可用；歡迎開 issue 回報結果。

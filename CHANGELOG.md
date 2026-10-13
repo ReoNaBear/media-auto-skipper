@@ -1,5 +1,13 @@
 # Changelog / 更新紀錄
 
+## 0.2.1 (2026-10-13)
+
+- Screen reader (TalkBack): the Edit, Delete, Remove and Add buttons now announce which rule or player they belong to, and input errors are read out when they appear. / 螢幕閱讀器（TalkBack）：編輯、刪除、移除、新增按鈕現在會念出所屬的規則或播放器，輸入錯誤出現時也會念出來。
+- Korean and Japanese wording polished (Japanese now uses full-width punctuation). / 修飾韓文與日文用字（日文改用全形標點）。
+- README lists the tested players (YouTube Music, YouTube, Spotify, KKBOX work; MixerBox does not, because it ignores the "next" command from other apps). / README 列出已測試的播放器（YouTube Music、YouTube、Spotify、KKBOX 可用；MixerBox 不可用，因為它忽略其他 App 送的「下一首」指令）。
+- Added an Android Auto test checklist in `docs/`. / 在 `docs/` 新增 Android Auto 實車測試清單。
+- Skipping behaviour is unchanged. / 跳過行為沒有改變。
+
 ## 0.2.0 (2026-10-12) — first public release / 首次公開版本
 
 Earlier internal build numbers (0.1.x up to 0.3.0) were never published, so they are folded into this release. / 先前的內部版本號（0.1.x 到 0.3.0）都沒有發布過，已整併成這一個版本。
